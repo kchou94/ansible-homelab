@@ -28,3 +28,10 @@
     cloudflared tunnel route dns {{ tunnel_id }} vaultwarden.{{ domain_name }}
   register: dns_output
   changed_when: dns_output.rc != 0
+
+- name: Bitwarden Backup Container
+  community.docker.docker_container:
+    name: vaultwarden-backup
+    image: bruceforce/vaultwarden-backup:2.0.1
+    restart_policy: unless-stopped
+    volumes_from: bitwarden
