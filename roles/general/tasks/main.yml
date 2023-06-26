@@ -1,0 +1,25 @@
+---
+- name: Update apt-cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  register: result
+  until: result is succeeded
+
+- name: Upgrade all packages
+  ansible.builtin.apt:
+    upgrade: true
+    state: latest
+  tags:
+    - skip_ansible_lint
+
+- name: Install python3-docker
+  ansible.builtin.apt:
+    name: python3-docker
+    state: present
+  register: result
+  until: result is succeeded
+
+- name: Create homelab network
+  community.docker.docker_network:
+    name: homelab

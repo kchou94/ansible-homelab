@@ -1,0 +1,21 @@
+---
+# docker
+docker_users: []
+
+# traefik
+traefik_data_directory: dir
+acme_email: ""
+cloudflare_email: ""
+cloudflare_api_key: ""
+domain_name: ""
+
+# cloudflared
+cloudflared_data_directory: dir
+account_tag: ""
+tunnel_secret: ""
+tunnel_id: ""
+TUNNEL_ORIGIN_CERT: "/etc/cloudflared/cert.pem"
+
+# bitwarden
+bitwarden_data_directory: dir
+bitwarden_allow_signups: true

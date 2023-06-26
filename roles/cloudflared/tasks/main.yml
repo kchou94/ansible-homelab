@@ -1,0 +1,45 @@
+---
+- name: Create cloudflared Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: kchou
+    group: kchou
+    mode: "0755"
+    state: directory
+  with_items:
+    - "{{ cloudflared_data_directory }}"
+
+- name: Template cloudflared credentials.json
+  ansible.builtin.template:
+    src: credentials.json
+    dest: "{{ cloudflared_data_directory }}/credentials.json"
+    mode: "0755"
+
+- name: Template cloudflared config.yml
+  ansible.builtin.template:
+    src: config.yml
+    dest: "{{ cloudflared_data_directory }}/config.yml"
+    mode: "0755"
+  register: template_config
+
+- name: Cloudflared Container
+  community.docker.docker_container:
+    name: cloudflared
+    image: cloudflare/cloudflared:2023.6.1
+    networks:
+      - name: homelab
+    command:
+      - "tunnel"
+      - "--config"
+      - "/etc/cloudflared/config.yml"
+      - "run"
+      - "{{ tunnel_id }}"
+    volumes:
+      - "{{ cloudflared_data_directory }}/config.yml:/etc/cloudflared/config.yml"
+      - "{{ cloudflared_data_directory }}/credentials.json:/etc/cloudflared/credentials.json"
+    env:
+      NO_AUTOUPDATE: "true"
+      TUNNEL_CRED_FILE: /etc/cloudflared/credentials.json
+      TUNNEL_TRANSPORT_PROTOCOL: auto
+    restart_policy: unless-stopped
+    recreate: "{{ template_config is changed }}"

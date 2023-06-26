@@ -1,0 +1,7 @@
+---
+# docker
+docker_daemon_options:
+  runtimes:
+    nvidia:
+        path: nvidia-container-runtime
+        args: []

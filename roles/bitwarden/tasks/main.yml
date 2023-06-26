@@ -1,0 +1,30 @@
+---
+- name: Create Bitwarden Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  with_items:
+    - "{{ bitwarden_data_directory }}"
+
+- name: Bitwarden Docker Container
+  community.docker.docker_container:
+    name: bitwarden
+    image: vaultwarden/server:1.28.1
+    pull: true
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ bitwarden_data_directory }}:/data"
+    env:
+      DOMAIN: "https://vaultwarden.{{ domain_name }}"
+      SIGNUPS_ALLOWED: "{{ bitwarden_allow_signups | string }}"
+      LOG_FILE: "/data/access.log"
+      WEBSOCKET_ENABLED: "true"
+    restart_policy: unless-stopped
+
+- name: Create Bitwarden DNS Record
+  ansible.builtin.command: >
+    cloudflared tunnel route dns {{ tunnel_id }} vaultwarden.{{ domain_name }}
+  register: dns_output
+  changed_when: dns_output.rc != 0

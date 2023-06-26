@@ -1,0 +1,20 @@
+---
+- name: Ansible-homelab
+  hosts: all
+  become: true
+  gather_facts: true
+
+  roles:
+    - geerlingguy.docker
+    - general
+
+- name: Ansible-homelab
+  hosts: y9000p
+  become: true
+  gather_facts: true
+
+  roles:
+    - traefik
+    - cloudflared
+    - echo-server
+    - bitwarden

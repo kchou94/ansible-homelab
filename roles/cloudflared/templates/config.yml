@@ -1,0 +1,11 @@
+ingress:
+  - hostname: "echo-server.{{ domain_name }}"
+    service: http://echo-server:8080
+
+  - hostname: "vaultwarden.{{ domain_name }}"
+    service: http://bitwarden:80
+
+  - hostname: "vaultwarden.{{ domain_name }}/notifications/hub"
+    service: http://bitwarden:3012
+
+  - service: http_status:404
