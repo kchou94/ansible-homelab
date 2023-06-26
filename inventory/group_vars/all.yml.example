@@ -22,3 +22,9 @@ bitwarden_allow_signups: true
 
 # portainer
 portainer_data_directory: dir
+
+# nextcloud
+nextcloud_data_directory: dir
+nextcloud_sql_user: "nextcloud"
+nextcloud_sql_password: ""
+nextcloud_sql_root_password: "nextcloud"

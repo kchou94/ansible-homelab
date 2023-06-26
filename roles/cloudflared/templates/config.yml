@@ -8,4 +8,7 @@ ingress:
   - hostname: "vaultwarden.{{ domain_name }}/notifications/hub"
     service: http://bitwarden:3012
 
+  - hostname: "nextcloud.{{ domain_name }}"
+    service: http://nextcloud:80
+
   - service: http_status:404

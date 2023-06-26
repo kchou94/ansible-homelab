@@ -1,0 +1,72 @@
+---
+- name: Create nextcloud Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  with_items:
+    - "{{ nextcloud_data_directory }}/nextcloud"
+    - "{{ nextcloud_data_directory }}/mysql"
+
+- name: Nextcloud Mysql Docker Container
+  community.docker.docker_container:
+    name: nextcloud-db
+    image: mariadb:10.6.14
+    networks:
+      - name: homelab
+    command:
+      - "--transaction-isolation=READ-COMMITTED"
+      - "--log-bin=binlog"
+      - "--binlog-format=ROW"
+    volumes:
+      - "{{ nextcloud_data_directory }}/mysql:/var/lib/mysql:rw"
+    env:
+      MYSQL_DATABASE: "nextcloud"
+      MYSQL_USER: "{{ nextcloud_sql_user }}"
+      MYSQL_PASSWORD: "{{ nextcloud_sql_password }}"
+      MYSQL_ROOT_PASSWORD: "{{ nextcloud_sql_root_password }}"
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DISABLE_UPGRADE_BACKUP: "1"
+    restart_policy: unless-stopped
+
+- name: Nextcloud Redis Docker Container
+  community.docker.docker_container:
+    name: nextcloud-redis
+    image: redis:7.0.11
+    networks:
+      - name: homelab
+    restart_policy: unless-stopped
+
+- name: Nextcloud Docker Container
+  community.docker.docker_container:
+    name: nextcloud
+    image: nextcloud:27.0.0
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ nextcloud_data_directory }}/nextcloud:/var/www/html:rw"
+    env:
+      MYSQL_HOST: "nextcloud-db"
+      MYSQL_DATABASE: "nextcloud"
+      MYSQL_USER: "{{ nextcloud_sql_user }}"
+      MYSQL_PASSWORD: "{{ nextcloud_sql_password }}"
+      REDIS_HOST: "nextcloud-redis"
+    restart_policy: unless-stopped
+
+- name: Nextcloud Cron Docker Container
+  community.docker.docker_container:
+    name: nextcloud-cron
+    image: nextcloud:27.0.0
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ nextcloud_data_directory }}/nextcloud:/var/www/html:rw"
+    entrypoint:
+      - "/cron.sh"
+    restart_policy: unless-stopped
+
+- name: Create Nextcloud DNS Record
+  ansible.builtin.command: >
+    cloudflared tunnel route dns {{ tunnel_id }} nextcloud.{{ domain_name }}
+  register: dns_output
+  changed_when: dns_output.rc != 0
