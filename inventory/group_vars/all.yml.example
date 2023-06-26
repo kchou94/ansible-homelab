@@ -19,3 +19,6 @@ TUNNEL_ORIGIN_CERT: "/etc/cloudflared/cert.pem"
 # bitwarden
 bitwarden_data_directory: dir
 bitwarden_allow_signups: true
+
+# portainer
+portainer_data_directory: dir

@@ -1,0 +1,25 @@
+---
+- name: Create portainer Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  with_items:
+    - "{{ portainer_data_directory }}"
+
+- name: Portainer Docker Container
+  community.docker.docker_container:
+    name: portainer
+    image: portainerci/portainer:2.18.0
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ portainer_data_directory }}:/data"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.portainer.rule: "Host(`portainer.{{ domain_name }}`)"
+      traefik.http.routers.portainer.entrypoints: "websecure"
+      traefik.http.routers.portainer.tls.certresolver: "myresolver"
+      traefik.http.services.portainer.loadbalancer.server.port: "9000"
+    restart_policy: unless-stopped
