@@ -5,9 +5,3 @@
     image: jmalloc/echo-server:0.3.5
     networks:
       - name: homelab
-
-- name: Create echo-server DNS Record
-  ansible.builtin.command: >
-    cloudflared tunnel route dns {{ tunnel_id }} echo-server.{{ domain_name }}
-  register: dns_output
-  changed_when: dns_output.rc != 0

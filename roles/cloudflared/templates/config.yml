@@ -1,14 +1,17 @@
 ingress:
-  - hostname: "echo-server.{{ domain_name }}"
+  - hostname: "echo-server.{{ tunnel_domain_name }}"
     service: http://echo-server:8080
 
-  - hostname: "vaultwarden.{{ domain_name }}"
+  - hostname: "vaultwarden.{{ tunnel_domain_name }}"
     service: http://bitwarden:80
 
-  - hostname: "vaultwarden.{{ domain_name }}/notifications/hub"
+  - hostname: "vaultwarden.{{ tunnel_domain_name }}/notifications/hub"
     service: http://bitwarden:3012
 
-  - hostname: "nextcloud.{{ domain_name }}"
+  - hostname: "nextcloud.{{ tunnel_domain_name }}"
     service: http://nextcloud:80
+
+  - hostname: "bookstack.{{ tunnel_domain_name }}"
+    service: http://bookstack:80
 
   - service: http_status:404

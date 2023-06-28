@@ -51,6 +51,14 @@
       MYSQL_USER: "{{ nextcloud_sql_user }}"
       MYSQL_PASSWORD: "{{ nextcloud_sql_password }}"
       REDIS_HOST: "nextcloud-redis"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.nextcloud.rule: "Host(`nextcloud.{{ domain_name }}`)"
+      traefik.http.routers.nextcloud.entrypoints: "websecure"
+      traefik.http.routers.nextcloud.tls.certresolver: "myresolver"
+      traefik.http.routers.nextcloud.tls.domains[0].main: "{{ domain_name }}"
+      traefik.http.routers.nextcloud.tls.domains[0].sans: "*.{{ domain_name }}"
+      traefik.http.services.nextcloud.loadbalancer.server.port: "80"
     restart_policy: unless-stopped
 
 - name: Nextcloud Cron Docker Container
@@ -64,9 +72,3 @@
     entrypoint:
       - "/cron.sh"
     restart_policy: unless-stopped
-
-- name: Create Nextcloud DNS Record
-  ansible.builtin.command: >
-    cloudflared tunnel route dns {{ tunnel_id }} nextcloud.{{ domain_name }}
-  register: dns_output
-  changed_when: dns_output.rc != 0

@@ -1,0 +1,67 @@
+---
+- name: Create outline Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  with_items:
+    - "{{ outline_data_directory }}/postgres"
+
+- name: Outline Postgres Docker Container
+  community.docker.docker_container:
+    name: outline-pg
+    image: postgres:15.3
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ outline_data_directory }}/postgres:/var/lib/postgresql/data:rw"
+    env:
+      POSTGRES_USER: "{{ outline_pg_user }}"
+      POSTGRES_PASSWORD: "{{ outline_pg_password }}"
+      POSTGRES_DB: 'outline'
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    restart_policy: unless-stopped
+
+- name: Outline Redis Docker Container
+  community.docker.docker_container:
+    name: outline-redis
+    image: redis:7.0.11
+    networks:
+      - name: homelab
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 30s
+      retries: 3
+    restart_policy: unless-stopped
+
+- name: Outline Docker Container
+  community.docker.docker_container:
+    name: outline
+    image: outlinewiki/outline:0.69.2
+    networks:
+      - name: homelab
+    env:
+      NODE_ENV: "production"
+      SECRET_KEY: "{{ outline_secret_key }}"
+      UTILS_SECRET: "{{ outline_utils_secret }}"
+      DATABASE_URL: "postgres://{{ outline_pg_user }}:{{ outline_pg_password }}@outline-pg:5432/outline"
+      PGSSLMODE: "disable"
+      REDIS_URL: "redis://outline-redis:6379"
+      URL: "https://outline.{{ domain_name }}"
+      PORT: "3000"
+      AWS_ACCESS_KEY_ID: "{{ outline_aws_access_key_id }}"
+      AWS_SECRET_ACCESS_KEY: "{{ outline_aws_secret_access_key }}"
+      AWS_REGION: "{{ minio_region_name }}"
+      AWS_S3_UPLOAD_BUCKET_URL: "http://minio:9000"
+      AWS_S3_UPLOAD_BUCKET_NAME: "outline"
+      AWS_S3_UPLOAD_MAX_SIZE: "26214400"
+      AWS_S3_FORCE_PATH_STYLE: "false"
+      GOOGLE_CLIENT_ID: "{{ outline_google_client_id }}"
+      GOOGLE_CLIENT_SECRET: "{{ outline_google_client_secret }}"
+    restart_policy: unless-stopped
+

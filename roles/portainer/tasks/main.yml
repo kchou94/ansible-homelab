@@ -21,5 +21,7 @@
       traefik.http.routers.portainer.rule: "Host(`portainer.{{ domain_name }}`)"
       traefik.http.routers.portainer.entrypoints: "websecure"
       traefik.http.routers.portainer.tls.certresolver: "myresolver"
+      traefik.http.routers.portainer.tls.domains[0].main: "{{ domain_name }}"
+      traefik.http.routers.portainer.tls.domains[0].sans: "*.{{ domain_name }}"
       traefik.http.services.portainer.loadbalancer.server.port: "9000"
     restart_policy: unless-stopped

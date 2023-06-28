@@ -43,3 +43,15 @@
       TUNNEL_TRANSPORT_PROTOCOL: auto
     restart_policy: unless-stopped
     recreate: "{{ template_config is changed }}"
+
+- name: Create DNS Record
+  ansible.builtin.command: >
+    cloudflared tunnel route dns {{ tunnel_id }} {{ tunnel_domain_name }}
+  register: dns_output
+  changed_when: dns_output.rc != 0
+
+- name: Create DNS Record
+  ansible.builtin.command: >
+    cloudflared tunnel route dns {{ tunnel_id }} *.{{ tunnel_domain_name }}
+  register: dns_output
+  changed_when: dns_output.rc != 0

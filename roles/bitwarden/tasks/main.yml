@@ -22,12 +22,6 @@
       WEBSOCKET_ENABLED: "true"
     restart_policy: unless-stopped
 
-- name: Create Bitwarden DNS Record
-  ansible.builtin.command: >
-    cloudflared tunnel route dns {{ tunnel_id }} vaultwarden.{{ domain_name }}
-  register: dns_output
-  changed_when: dns_output.rc != 0
-
 - name: Bitwarden Backup Container
   community.docker.docker_container:
     name: vaultwarden-backup

@@ -1,0 +1,56 @@
+---
+- name: Create Bookstack Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  with_items:
+    - "{{ bookstack_data_directory }}"
+    - "{{ bookstack_data_directory }}/app"
+    - "{{ bookstack_data_directory }}/db"
+
+- name: Bookstack Mariadb Docker Container
+  community.docker.docker_container:
+    name: bookstack_db
+    image: linuxserver/mariadb:10.11.4
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ bookstack_data_directory }}/db:/config:rw"
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      MYSQL_ROOT_PASSWORD: "{{ bookstack_db_root_password }}"
+      TZ: "Asia/Shanghai"
+      MYSQL_DATABASE: "bookstack"
+      MYSQL_USER: "{{ bookstack_db_user }}}}"
+      MYSQL_PASSWORD: "{{ bookstack_db_password }}"
+    restart_policy: unless-stopped
+
+- name: Bookstack Docker Container
+  community.docker.docker_container:
+    name: bookstack
+    image: linuxserver/bookstack:23.05.2
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ bookstack_data_directory }}/app:/config:rw"
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      APP_URL: "https://bookstack.{{ tunnel_domain_name }}"
+      TZ: "Asia/Shanghai"
+      DB_HOST: "bookstack_db"
+      DB_PORT: "3306"
+      DB_DATABASE: "bookstack"
+      DB_USER: "{{ bookstack_db_user }}}}"
+      DB_PASS: "{{ bookstack_db_password }}"
+    # labels:
+    #   traefik.enable: "true"
+    #   traefik.http.routers.bookstack.rule: "Host(`bookstack.{{ domain_name }}`)"
+    #   traefik.http.routers.bookstack.entrypoints: "websecure"
+    #   traefik.http.routers.bookstack.tls.certresolver: "myresolver"
+    #   traefik.http.routers.bookstack.tls.domains[0].main: "{{ domain_name }}"
+    #   traefik.http.routers.bookstack.tls.domains[0].sans: "*.{{ domain_name }}"
+    #   traefik.http.services.bookstack.loadbalancer.server.port: "80"
+    restart_policy: unless-stopped
