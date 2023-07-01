@@ -1,0 +1,29 @@
+---
+- name: Create Qbittorrent Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  with_items:
+    - "{{ qbittorrent_data_directory }}"
+    - "{{ qbittorrent_data_directory }}/config"
+
+- name: Qbittorrent Docker Container
+  community.docker.docker_container:
+    name: qbittorrent
+    image: bernylinville/qbittorrent:4.5.4_v2.0.9
+    networks:
+      - name: homelab
+    ports:
+      - "16882:16882"
+      - "16882:16882/udp"
+    volumes:
+      - "{{ qbittorrent_data_directory }}/config:/config"
+      - "{{ media_directory }}:/media"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.qbittorrent.rule: "Host(`qbittorrent.{{ domain_name }}`)"
+      traefik.http.routers.qbittorrent.entrypoints: "websecure"
+      traefik.http.routers.qbittorrent.tls.certresolver: "myresolver"
+      traefik.http.services.qbittorrent.loadbalancer.server.port: "80"
+    restart_policy: unless-stopped

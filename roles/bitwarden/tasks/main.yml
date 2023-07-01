@@ -20,6 +20,7 @@
       SIGNUPS_ALLOWED: "{{ bitwarden_allow_signups | string }}"
       LOG_FILE: "/data/access.log"
       WEBSOCKET_ENABLED: "true"
+      ADMIN_TOKEN: "{{ bitwarden_admin_token }}"
     restart_policy: unless-stopped
 
 - name: Bitwarden Backup Container

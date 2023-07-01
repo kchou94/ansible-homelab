@@ -19,7 +19,7 @@
       - "16881:16881/udp"
     volumes:
       - "{{ qbittorrentee_data_directory }}/config:/config"
-      - "{{ media_directory }}:/downloads"
+      - "{{ media_directory }}:/media"
     labels:
       traefik.enable: "true"
       traefik.http.routers.qbittorrentee.rule: "Host(`qbittorrentee.{{ domain_name }}`)"

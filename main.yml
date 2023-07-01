@@ -18,8 +18,9 @@
     - cloudflared
     - echo-server
     - bitwarden
+    - qbittorrent
     - qbittorrentee
-    - portainer
-    - nextcloud
-    - minio
-    - bookstack
+    # - portainer
+    # - nextcloud
+    # - minio
+    # - bookstack

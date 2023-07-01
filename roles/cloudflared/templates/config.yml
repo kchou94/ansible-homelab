@@ -8,10 +8,13 @@ ingress:
   - hostname: "vaultwarden.{{ tunnel_domain_name }}/notifications/hub"
     service: http://bitwarden:3012
 
-  - hostname: "nextcloud.{{ tunnel_domain_name }}"
-    service: http://nextcloud:80
+  # - hostname: "nextcloud.{{ tunnel_domain_name }}"
+  #   service: http://nextcloud:80
 
-  - hostname: "bookstack.{{ tunnel_domain_name }}"
-    service: http://bookstack:80
+  # - hostname: "bookstack.{{ tunnel_domain_name }}"
+  #   service: http://bookstack:80
+
+  # - hostname: "sd.{{ tunnel_domain_name }}"
+  #   service: http://192.168.50.4:7860
 
   - service: http_status:404
