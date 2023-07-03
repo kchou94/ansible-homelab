@@ -1,0 +1,49 @@
+---
+- name: Create Shiori Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  with_items:
+    - "{{ shiori_data_directory }}"
+    - "{{ shiori_data_directory }}/db"
+    - "{{ shiori_data_directory }}/shiori"
+
+- name: Shiori db Docker Container
+  community.docker.docker_container:
+    name: shiori-db
+    image: docker.io/library/postgres:15
+    networks:
+      - name: homelab
+    env:
+      POSTGRES_PASSWORD: "{{ shiori_db_password }}"
+      POSTGRES_USER: "{{ shiori_db_user }}"
+      POSTGRES_DB: "shiori"
+    volumes:
+      - "{{ shiori_data_directory }}/db:/var/lib/postgresql/data"
+    restart_policy: unless-stopped
+
+- name: Shiori Docker Container
+  community.docker.docker_container:
+    name: shiori
+    image: bernylinville/shiori:latest
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ shiori_data_directory }}/shiori:/shiori"
+    env:
+      SHIORI_DBMS: "postgresql"
+      SHIORI_PG_USER: "{{ shiori_db_user }}"
+      SHIORI_PG_PASS: "{{ shiori_db_password }}"
+      SHIORI_PG_NAME: "shiori"
+      SHIORI_PG_HOST: "shiori-db"
+      SHIORI_PG_PORT: "5432"
+    # labels:
+    #   traefik.enable: "true"
+    #   traefik.http.routers.shiori.rule: "Host(`shiori.{{ domain_name }}`)"
+    #   traefik.http.routers.shiori.entrypoints: "websecure"
+    #   traefik.http.routers.shiori.tls.certresolver: "myresolver"
+    #   traefik.http.routers.shiori.tls.domains[0].main: "{{ domain_name }}"
+    #   traefik.http.routers.shiori.tls.domains[0].sans: "*.{{ domain_name }}"
+    #   traefik.http.services.shiori.loadbalancer.server.port: "8080"
+    restart_policy: unless-stopped

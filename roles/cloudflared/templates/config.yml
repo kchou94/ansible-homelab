@@ -8,6 +8,9 @@ ingress:
   - hostname: "vaultwarden.{{ tunnel_domain_name }}/notifications/hub"
     service: http://bitwarden:3012
 
+  - hostname: "shiori.{{ tunnel_domain_name }}"
+    service: http://shiori:8080
+
   # - hostname: "nextcloud.{{ tunnel_domain_name }}"
   #   service: http://nextcloud:80
 
