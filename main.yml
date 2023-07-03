@@ -20,6 +20,8 @@
     - bitwarden
     - qbittorrent
     - qbittorrentee
+    - jellyfin
+    - syncthing
     # - portainer
     # - nextcloud
     # - minio

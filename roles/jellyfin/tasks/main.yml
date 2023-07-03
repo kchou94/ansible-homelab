@@ -1,0 +1,35 @@
+---
+- name: Create Jellyfin Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  with_items:
+    - "{{ jellyfin_data_directory }}"
+    - "{{ jellyfin_data_directory }}/config"
+    - "{{ jellyfin_data_directory }}/cache"
+
+- name: Jellyfin Docker Container
+  community.docker.docker_container:
+    name: jellyfin
+    image: jellyfin/jellyfin:10.8.10
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ jellyfin_data_directory }}/config:/config"
+      - "{{ jellyfin_data_directory }}/cache:/cache"
+      - "{{ media_directory }}:/media"
+    runtime: nvidia
+    device_requests:
+      - driver: nvidia
+        capabilities:
+          - gpu
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.jellyfin.rule: "Host(`jellyfin.{{ domain_name }}`)"
+      traefik.http.routers.jellyfin.entrypoints: "websecure"
+      traefik.http.routers.jellyfin.tls.certresolver: "myresolver"
+      traefik.http.routers.jellyfin.tls.domains[0].main: "{{ domain_name }}"
+      traefik.http.routers.jellyfin.tls.domains[0].sans: "*.{{ domain_name }}"
+      traefik.http.services.jellyfin.loadbalancer.server.port: "8096"
+    restart_policy: unless-stopped

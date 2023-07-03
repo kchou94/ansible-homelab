@@ -25,5 +25,7 @@
       traefik.http.routers.qbittorrent.rule: "Host(`qbittorrent.{{ domain_name }}`)"
       traefik.http.routers.qbittorrent.entrypoints: "websecure"
       traefik.http.routers.qbittorrent.tls.certresolver: "myresolver"
+      traefik.http.routers.qbittorrent.tls.domains[0].main: "{{ domain_name }}"
+      traefik.http.routers.qbittorrent.tls.domains[0].sans: "*.{{ domain_name }}"
       traefik.http.services.qbittorrent.loadbalancer.server.port: "80"
     restart_policy: unless-stopped

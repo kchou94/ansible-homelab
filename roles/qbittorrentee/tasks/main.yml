@@ -25,5 +25,7 @@
       traefik.http.routers.qbittorrentee.rule: "Host(`qbittorrentee.{{ domain_name }}`)"
       traefik.http.routers.qbittorrentee.entrypoints: "websecure"
       traefik.http.routers.qbittorrentee.tls.certresolver: "myresolver"
+      traefik.http.routers.qbittorrentee.tls.domains[0].main: "{{ domain_name }}"
+      traefik.http.routers.qbittorrentee.tls.domains[0].sans: "*.{{ domain_name }}"
       traefik.http.services.qbittorrentee.loadbalancer.server.port: "8080"
     restart_policy: unless-stopped
