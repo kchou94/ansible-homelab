@@ -1,0 +1,35 @@
+---
+- name: Create Navidrome Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+  with_items:
+    - "{{ navidrome_data_directory }}"
+
+- name: Navidrome Docker Container
+  community.docker.docker_container:
+    name: navidrome
+    image: deluan/navidrome:latest
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ navidrome_data_directory }}:/data"
+      - "{{ music_directory }}:/music:ro"
+    user: "1000:1000"
+    env:
+      ND_SCANSCHEDULE: 6h
+      ND_LOGLEVEL: info
+      ND_SESSIONTIMEOUT: 168h
+      ND_MUSICFOLDER: "/music"
+    # labels:
+    #   traefik.enable: "true"
+    #   traefik.http.routers.navidrome.rule: "Host(`navidrome.{{ domain_name }}`)"
+    #   traefik.http.routers.navidrome.entrypoints: "websecure"
+    #   traefik.http.routers.navidrome.tls.certresolver: "myresolver"
+    #   traefik.http.routers.navidrome.tls.domains[0].main: "{{ domain_name }}"
+    #   traefik.http.routers.navidrome.tls.domains[0].sans: "*.{{ domain_name }}"
+    #   traefik.http.services.navidrome.loadbalancer.server.port: "8080"
+    restart_policy: unless-stopped

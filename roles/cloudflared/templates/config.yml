@@ -11,6 +11,9 @@ ingress:
   - hostname: "shiori.{{ tunnel_domain_name }}"
     service: http://shiori:8080
 
+  - hostname: "navidrome.{{ tunnel_domain_name }}"
+    service: http://navidrome:4533
+
   # - hostname: "nextcloud.{{ tunnel_domain_name }}"
   #   service: http://nextcloud:80
 

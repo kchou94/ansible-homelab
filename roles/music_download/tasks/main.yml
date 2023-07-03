@@ -1,0 +1,20 @@
+---
+- name: Music_download Docker Container
+  community.docker.docker_container:
+    name: music_download
+    image: registry.cn-hangzhou.aliyuncs.com/music_downloader/qq_flac_music_downloader
+    networks:
+      - name: homelab
+    ports:
+      - "8899:8899"
+    volumes:
+      - "{{ music_directory }}://workspace/music:rw"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.music_download.rule: "Host(`music_download.{{ domain_name }}`)"
+      traefik.http.routers.music_download.entrypoints: "websecure"
+      traefik.http.routers.music_download.tls.certresolver: "myresolver"
+      traefik.http.routers.music_download.tls.domains[0].main: "{{ domain_name }}"
+      traefik.http.routers.music_download.tls.domains[0].sans: "*.{{ domain_name }}"
+      traefik.http.services.music_download.loadbalancer.server.port: "8899"
+    restart_policy: unless-stopped

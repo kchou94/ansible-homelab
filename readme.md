@@ -20,6 +20,11 @@ sudo zfs create nas/backup
 sudo zfs set sharenfs=on nas/backup
 sudo zfs set sharenfs="rw=@192.168.50.0/24" nas/backup
 sudo chmod 777 /nas/backup
+
+sudo zfs create nas/music
+sudo zfs set sharenfs=on nas/music
+sudo zfs set sharenfs="rw=@192.168.50.0/24" nas/music
+sudo chmod 777 /nas/music
 ```
 
 ```

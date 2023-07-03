@@ -23,6 +23,8 @@
     - jellyfin
     - syncthing
     - shiori
+    - navidrome
+    - music_download
     # - portainer
     # - nextcloud
     # - minio
