@@ -30,6 +30,7 @@
     - netdata
     - homepage
     - miniflux
+    - mattermost
     # - portainer
     # - nextcloud
     # - minio

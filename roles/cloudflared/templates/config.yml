@@ -26,6 +26,9 @@ ingress:
   - hostname: "miniflux.{{ tunnel_domain_name }}"
     service: http://miniflux:8080
 
+  - hostname: "mm.{{ tunnel_domain_name }}"
+    service: http://mattermost:8065
+
   # - hostname: "nextcloud.{{ tunnel_domain_name }}"
   #   service: http://nextcloud:80
 
