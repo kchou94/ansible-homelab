@@ -1,0 +1,59 @@
+---
+# - name: Create Netdata Directories
+#   ansible.builtin.file:
+#     path: "{{ item }}"
+#     state: directory
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+#     mode: "0755"
+#   with_items:
+#     - "{{ netdata_data_directory }}"
+#     - "{{ netdata_data_directory }}/config"
+#     - "{{ netdata_data_directory }}/lib"
+#     - "{{ netdata_data_directory }}/cache"
+
+- name: Create netdata volume
+  community.docker.docker_volume:
+    name: "{{ item }}"
+  with_items:
+    - netdataconfig
+    - netdatalib
+    - netdatacache
+
+- name: Netdata Docker Container
+  community.docker.docker_container:
+    name: netdata
+    image: netdata/netdata:v1.40.1
+    networks:
+      - name: homelab
+    ports:
+      - "19999:19999"
+    env:
+      NETDATA_EXTRA_APK_PACKAGES: "gcompat lm-sensors"
+    volumes:
+      - "netdataconfig:/etc/netdata"
+      - "netdatalib:/var/lib/netdata"
+      - "netdatacache:/var/cache/netdata"
+      - "/etc/passwd:/host/etc/passwd:ro"
+      - "/etc/group:/host/etc/group:ro"
+      - "/proc:/host/proc:ro"
+      - "/sys:/host/sys:ro"
+      - "/etc/os-release:/host/etc/os-release:ro"
+    capabilities:
+      - SYS_PTRACE
+    security_opts:
+      - apparmor:unconfined
+    runtime: nvidia
+    device_requests:
+      - driver: nvidia
+        capabilities:
+          - gpu
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.netdata.rule: "Host(`netdata.{{ domain_name }}`)"
+      traefik.http.routers.netdata.entrypoints: "websecure"
+      traefik.http.routers.netdata.tls.certresolver: "myresolver"
+      traefik.http.routers.netdata.tls.domains[0].main: "{{ domain_name }}"
+      traefik.http.routers.netdata.tls.domains[0].sans: "*.{{ domain_name }}"
+      traefik.http.services.netdata.loadbalancer.server.port: "19999"
+    restart_policy: unless-stopped
