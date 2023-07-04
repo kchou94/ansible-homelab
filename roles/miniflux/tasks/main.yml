@@ -1,0 +1,51 @@
+---
+- name: Create miniflux Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+  with_items:
+    - "{{ miniflux_data_directory }}"
+    - "{{ miniflux_data_directory }}/db"
+
+- name: Miniflux db Docker Container
+  community.docker.docker_container:
+    name: miniflux-db
+    image: postgres:15
+    networks:
+      - name: homelab
+    env:
+      POSTGRES_PASSWORD: "{{ miniflux_db_password }}"
+      POSTGRES_USER: "{{ miniflux_db_user }}"
+      POSTGRES_DB: "miniflux"
+    volumes:
+      - "{{ miniflux_data_directory }}/db:/var/lib/postgresql/data"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "miniflux"]
+      interval: 10s
+      start_period: 30s
+    restart_policy: unless-stopped
+
+- name: Miniflux Docker Container
+  community.docker.docker_container:
+    name: miniflux
+    image: miniflux/miniflux:2.0.45
+    networks:
+      - name: homelab
+    env:
+      DATABASE_URL: "postgres://{{ miniflux_db_user }}:{{ miniflux_db_password }}@miniflux-db:5432/miniflux?sslmode=disable"
+      RUN_MIGRATIONS: "1"
+      CREATE_ADMIN: "1"
+      ADMIN_USERNAME: "{{ miniflux_admin_username }}"
+      ADMIN_PASSWORD: "{{ miniflux_admin_password }}"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.miniflux.rule: "Host(`miniflux.{{ domain_name }}`)"
+      traefik.http.routers.miniflux.entrypoints: "websecure"
+      traefik.http.routers.miniflux.tls.certresolver: "myresolver"
+      traefik.http.routers.miniflux.tls.domains[0].main: "{{ domain_name }}"
+      traefik.http.routers.miniflux.tls.domains[0].sans: "*.{{ domain_name }}"
+      traefik.http.services.miniflux.loadbalancer.server.port: "8080"
+    restart_policy: unless-stopped

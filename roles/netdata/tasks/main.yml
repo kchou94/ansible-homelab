@@ -29,7 +29,7 @@
     ports:
       - "19999:19999"
     env:
-      NETDATA_EXTRA_APK_PACKAGES: "gcompat lm-sensors"
+      NETDATA_EXTRA_APK_PACKAGES: "lm-sensors"
     volumes:
       - "netdataconfig:/etc/netdata"
       - "netdatalib:/var/lib/netdata"
@@ -43,11 +43,6 @@
       - SYS_PTRACE
     security_opts:
       - apparmor:unconfined
-    runtime: nvidia
-    device_requests:
-      - driver: nvidia
-        capabilities:
-          - gpu
     labels:
       traefik.enable: "true"
       traefik.http.routers.netdata.rule: "Host(`netdata.{{ domain_name }}`)"

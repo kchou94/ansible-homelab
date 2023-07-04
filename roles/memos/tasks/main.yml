@@ -23,4 +23,6 @@
       traefik.http.routers.memos.tls.domains[0].main: "{{ domain_name }}"
       traefik.http.routers.memos.tls.domains[0].sans: "*.{{ domain_name }}"
       traefik.http.services.memos.loadbalancer.server.port: "5230"
+      homepage.name: "Memos"
+      homepage.href: "https://memos.{{ tunnel_domain_name }}"
     restart_policy: unless-stopped

@@ -1,0 +1,33 @@
+---
+- name: Create homepage Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+  with_items:
+    - "{{ homepage_data_directory }}"
+    - "{{ homepage_data_directory }}/config"
+
+- name: Homepage Docker Container
+  community.docker.docker_container:
+    name: homepage
+    image: ghcr.io/benphelps/homepage:v0.6.21
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ homepage_data_directory }}/config:/app/config"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    env:
+      PUID: "1000"
+      PGID: "1000"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.homepage.rule: "Host(`homepage.{{ domain_name }}`)"
+      traefik.http.routers.homepage.entrypoints: "websecure"
+      traefik.http.routers.homepage.tls.certresolver: "myresolver"
+      traefik.http.routers.homepage.tls.domains[0].main: "{{ domain_name }}"
+      traefik.http.routers.homepage.tls.domains[0].sans: "*.{{ domain_name }}"
+      traefik.http.services.homepage.loadbalancer.server.port: "3000"
+    restart_policy: unless-stopped

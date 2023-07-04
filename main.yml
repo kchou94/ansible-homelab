@@ -28,6 +28,8 @@
     - memos
     - immich
     - netdata
+    - homepage
+    - miniflux
     # - portainer
     # - nextcloud
     # - minio

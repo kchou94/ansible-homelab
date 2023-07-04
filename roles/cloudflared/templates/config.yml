@@ -20,6 +20,12 @@ ingress:
   - hostname: "immich.{{ tunnel_domain_name }}"
     service: http://immich-proxy:8080
 
+  - hostname: "homepage.{{ tunnel_domain_name }}"
+    service: http://homepage:3000
+
+  - hostname: "miniflux.{{ tunnel_domain_name }}"
+    service: http://miniflux:8080
+
   # - hostname: "nextcloud.{{ tunnel_domain_name }}"
   #   service: http://nextcloud:80
 
