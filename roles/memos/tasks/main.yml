@@ -1,0 +1,26 @@
+---
+- name: Create Memos Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  with_items:
+    - "{{ memos_data_directory }}"
+
+- name: Memos Docker Container
+  community.docker.docker_container:
+    name: memos
+    image: neosmemo/memos:0.13.2
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ memos_data_directory }}:/var/opt/memos"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.memos.rule: "Host(`memos.{{ domain_name }}`)"
+      traefik.http.routers.memos.entrypoints: "websecure"
+      traefik.http.routers.memos.tls.certresolver: "myresolver"
+      traefik.http.routers.memos.tls.domains[0].main: "{{ domain_name }}"
+      traefik.http.routers.memos.tls.domains[0].sans: "*.{{ domain_name }}"
+      traefik.http.services.memos.loadbalancer.server.port: "5230"
+    restart_policy: unless-stopped
