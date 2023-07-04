@@ -1,0 +1,155 @@
+---
+- name: Create Immich Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  with_items:
+    - "{{ immich_data_directory }}"
+    - "{{ immich_data_directory }}/db"
+    - "{{ immich_data_directory }}/typesense"
+    - "{{ immich_data_directory }}/cache"
+
+- name: Immich db Docker Container
+  community.docker.docker_container:
+    name: immich-db
+    image: postgres:14-alpine3.18
+    networks:
+      - name: homelab
+    env:
+      POSTGRES_PASSWORD: "{{ immich_db_password }}"
+      POSTGRES_USER: "{{ immich_db_user }}"
+      POSTGRES_DB: "immich"
+      PG_DATA: /var/lib/postgresql/data
+    volumes:
+      - "{{ immich_data_directory }}/db:/var/lib/postgresql/data"
+    restart_policy: unless-stopped
+
+- name: Immich redis Docker Container
+  community.docker.docker_container:
+    name: immich-redis
+    image: redis:6.2-alpine3.18
+    networks:
+      - name: homelab
+    restart_policy: unless-stopped
+
+- name: Immich typesense Docker Container
+  community.docker.docker_container:
+    name: immich-typesense
+    image: typesense/typesense:0.24.1
+    networks:
+      - name: homelab
+    env:
+      TYPESENSE_API_KEY: "{{ immich_typesense_api_key }}"
+      TYPESENSE_DATA_DIR: "/data"
+    volumes:
+      - "{{ immich_data_directory }}/typesense:/data"
+    log_driver: "none"
+    restart_policy: unless-stopped
+
+- name: Immich server Docker Container
+  community.docker.docker_container:
+    name: immich-server
+    image: "ghcr.io/immich-app/immich-server:{{ immich_version }}"
+    command:
+      - "start.sh"
+      - "immich"
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ immich_upload_directory }}:/usr/src/app/upload"
+    env:
+      DB_HOSTNAME: "immich-db"
+      DB_USERNAME: "{{ immich_db_user }}"
+      DB_PASSWORD: "{{ immich_db_password }}"
+      DB_DATABASE_NAME: "immich"
+      REDIS_HOSTNAME: "immich-redis"
+      TYPESENSE_HOST: "immich-typesense"
+      TYPESENSE_API_KEY: "{{ immich_typesense_api_key }}"
+      IMMICH_WEB_URL: "http://immich-web:3000"
+      IMMICH_SERVER_URL: "http://immich-server:3001"
+      IMMICH_MACHINE_LEARNING_URL: "http://immich-machine-learning:3003"
+    restart_policy: unless-stopped
+
+- name: Immich microservices Docker Container
+  community.docker.docker_container:
+    name: immich-microservices
+    image: "ghcr.io/immich-app/immich-server:{{ immich_version }}"
+    command:
+      - "start.sh"
+      - "microservices"
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ immich_upload_directory }}:/usr/src/app/upload"
+    env:
+      DB_HOSTNAME: "immich-db"
+      DB_USERNAME: "{{ immich_db_user }}"
+      DB_PASSWORD: "{{ immich_db_password }}"
+      DB_DATABASE_NAME: "immich"
+      REDIS_HOSTNAME: "immich-redis"
+      TYPESENSE_HOST: "immich-typesense"
+      TYPESENSE_API_KEY: "{{ immich_typesense_api_key }}"
+      IMMICH_WEB_URL: "http://immich-web:3000"
+      IMMICH_SERVER_URL: "http://immich-server:3001"
+      IMMICH_MACHINE_LEARNING_URL: "http://immich-machine-learning:3003"
+    restart_policy: unless-stopped
+
+- name: Immich machine-learning Docker Container
+  community.docker.docker_container:
+    name: immich-machine-learning
+    image: "ghcr.io/immich-app/immich-machine-learning:{{ immich_version }}"
+    networks:
+      - name: homelab
+    volumes:
+      - "{{ immich_data_directory }}/cache:/cache"
+    env:
+      DB_HOSTNAME: "immich-db"
+      DB_USERNAME: "{{ immich_db_user }}"
+      DB_PASSWORD: "{{ immich_db_password }}"
+      DB_DATABASE_NAME: "immich"
+      REDIS_HOSTNAME: "immich-redis"
+      TYPESENSE_HOST: "immich-typesense"
+      TYPESENSE_API_KEY: "{{ immich_typesense_api_key }}"
+      IMMICH_WEB_URL: "http://immich-web:3000"
+      IMMICH_SERVER_URL: "http://immich-server:3001"
+      IMMICH_MACHINE_LEARNING_URL: "http://immich-machine-learning:3003"
+    restart_policy: unless-stopped
+
+- name: Immich web Docker Container
+  community.docker.docker_container:
+    name: immich-web
+    image: "ghcr.io/immich-app/immich-web:{{ immich_version }}"
+    networks:
+      - name: homelab
+    env:
+      DB_HOSTNAME: "immich-db"
+      DB_USERNAME: "{{ immich_db_user }}"
+      DB_PASSWORD: "{{ immich_db_password }}"
+      DB_DATABASE_NAME: "immich"
+      REDIS_HOSTNAME: "immich-redis"
+      TYPESENSE_HOST: "immich-typesense"
+      TYPESENSE_API_KEY: "{{ immich_typesense_api_key }}"
+      IMMICH_WEB_URL: "http://immich-web:3000"
+      IMMICH_SERVER_URL: "http://immich-server:3001"
+      IMMICH_MACHINE_LEARNING_URL: "http://immich-machine-learning:3003"
+    restart_policy: unless-stopped
+
+- name: Immich proxy Docker Container
+  community.docker.docker_container:
+    name: immich-proxy
+    image: "ghcr.io/immich-app/immich-proxy:{{ immich_version }}"
+    networks:
+      - name: homelab
+    env:
+      DB_HOSTNAME: "immich-db"
+      DB_USERNAME: "{{ immich_db_user }}"
+      DB_PASSWORD: "{{ immich_db_password }}"
+      DB_DATABASE_NAME: "immich"
+      REDIS_HOSTNAME: "immich-redis"
+      TYPESENSE_HOST: "immich-typesense"
+      TYPESENSE_API_KEY: "{{ immich_typesense_api_key }}"
+      IMMICH_WEB_URL: "http://immich-web:3000"
+      IMMICH_SERVER_URL: "http://immich-server:3001"
+      IMMICH_MACHINE_LEARNING_URL: "http://immich-machine-learning:3003"
+    restart_policy: unless-stopped

@@ -14,6 +14,12 @@ ingress:
   - hostname: "navidrome.{{ tunnel_domain_name }}"
     service: http://navidrome:4533
 
+  - hostname: "memos.{{ tunnel_domain_name }}"
+    service: http://memos:5230
+
+  - hostname: "immich.{{ tunnel_domain_name }}"
+    service: http://immich-proxy:8080
+
   # - hostname: "nextcloud.{{ tunnel_domain_name }}"
   #   service: http://nextcloud:80
 

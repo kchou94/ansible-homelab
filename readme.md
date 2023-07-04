@@ -25,6 +25,11 @@ sudo zfs create nas/music
 sudo zfs set sharenfs=on nas/music
 sudo zfs set sharenfs="rw=@192.168.50.0/24" nas/music
 sudo chmod 777 /nas/music
+
+sudo zfs create nas/immich
+sudo zfs set sharenfs=on nas/immich
+sudo zfs set sharenfs="rw=@192.168.50.0/24" nas/immich
+sudo chmod 777 /nas/immich
 ```
 
 ```
