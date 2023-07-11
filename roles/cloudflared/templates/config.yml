@@ -29,6 +29,9 @@ ingress:
   - hostname: "mm.{{ tunnel_domain_name }}"
     service: http://mattermost:8065
 
+  - hostname: "ha.{{ tunnel_domain_name }}"
+    service: http://homeassistant:8123
+
   # - hostname: "nextcloud.{{ tunnel_domain_name }}"
   #   service: http://nextcloud:80
 

@@ -1,0 +1,39 @@
+---
+- name: Start Homeassistant
+  block:
+    - name: Create Home Assistant Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ homeassistant_data_directory }}/config"
+
+    - name: Home Assistant Docker Container
+      community.docker.docker_container:
+        name: "{{ homeassistant_container_name }}"
+        image: "{{ homeassistant_image_name }}:{{ homeassistant_image_version }}"
+        pull: true
+        volumes:
+          - "{{ homeassistant_data_directory }}/config:/config:rw"
+        networks:
+          - name: homelab
+        restart_policy: unless-stopped
+        env:
+          TZ: "{{ timezone }}"
+        labels:
+          traefik.http.routers.homeassistant.rule: "Host(`{{ homeassistant_hostname }}.{{ domain_name }}`)"
+          traefik.http.routers.homeassistant.entrypoints: "websecure"
+          traefik.http.routers.homeassistant.tls.certresolver: "myresolver"
+          traefik.http.routers.homeassistant.tls.domains[0].main: "{{ domain_name }}"
+          traefik.http.routers.homeassistant.tls.domains[0].sans: "*.{{ domain_name }}"
+          traefik.http.services.homeassistant.loadbalancer.server.port: "8123"
+        # memory: "{{ homeassistant_memory }}"
+  when: homeassistant_enabled is true
+
+- name: Stop homeassistant
+  block:
+    - name: Stop homeassistant
+      community.docker.docker_container:
+        name: "{{ homeassistant_container_name }}"
+        state: absent
+  when: homeassistant_enabled is false
