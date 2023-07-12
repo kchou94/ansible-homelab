@@ -25,7 +25,7 @@
 - name: Cloudflared Container
   community.docker.docker_container:
     name: cloudflared
-    image: cloudflare/cloudflared:2023.6.1
+    image: cloudflare/cloudflared:2023.7.0
     networks:
       - name: homelab
     command:
