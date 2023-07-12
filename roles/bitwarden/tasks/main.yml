@@ -26,6 +26,6 @@
 - name: Bitwarden Backup Container
   community.docker.docker_container:
     name: vaultwarden-backup
-    image: bruceforce/vaultwarden-backup:2.0.1
+    image: bruceforce/vaultwarden-backup:2.0.4
     restart_policy: unless-stopped
     volumes_from: bitwarden
