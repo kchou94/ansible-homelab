@@ -28,7 +28,7 @@
 - name: Immich redis Docker Container
   community.docker.docker_container:
     name: immich-redis
-    image: redis:6.2-alpine3.18
+    image: redis:7.0-alpine3.18
     networks:
       - name: homelab
     restart_policy: unless-stopped
