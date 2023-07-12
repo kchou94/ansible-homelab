@@ -20,7 +20,7 @@
 - name: Mattermost db Docker Container
   community.docker.docker_container:
     name: mattermost-db
-    image: postgres:13-alpine
+    image: postgres:15-alpine
     networks:
       - name: homelab
     env:
