@@ -1,2 +1,2 @@
 ---
-bitwarden_version: "1.29.0"
+bitwarden_allow_signups: false

@@ -1,30 +1,85 @@
 ---
+ansible_user: berny
+timezone: "Asia/Shanghai"
+
 # docker
-docker_users: []
+docker_users:
+  - berny
+docker_home: /data
 
 # traefik
-traefik_data_directory: dir
+traefik_data_directory: /data/traefik
 acme_email: ""
 cloudflare_email: ""
 cloudflare_api_key: ""
 domain_name: ""
 
 # cloudflared
-cloudflared_data_directory: dir
+cloudflared_data_directory: /data/cloudflared
 account_tag: ""
 tunnel_secret: ""
 tunnel_id: ""
 TUNNEL_ORIGIN_CERT: "/etc/cloudflared/cert.pem"
+tunnel_domain_name: ""
 
 # bitwarden
-bitwarden_data_directory: dir
-bitwarden_allow_signups: true
+bitwarden_data_directory: /data/bitwarden
+bitwarden_allow_signups: false
+bitwarden_admin_token: ''
+bitwarden_version: "1.29.0"
 
-# portainer
-portainer_data_directory: dir
+# qbittorrent
+qbittorrent_data_directory: /data/qbittorrent
+media_directory: /Media
 
-# nextcloud
-nextcloud_data_directory: dir
-nextcloud_sql_user: "nextcloud"
-nextcloud_sql_password: ""
-nextcloud_sql_root_password: "nextcloud"
+# qbittorrentee
+qbittorrentee_data_directory: /data/qbittorrentee
+
+# jellyfin
+jellyfin_data_directory: /data/jellyfin
+
+# syncthing
+syncthing_data_directory: /syncthing/syncthing
+syncthing_config_directory: /data/syncthing
+
+# shiori
+shiori_data_directory: /data/shiori
+shiori_db_password: ""
+shiori_db_user: ""
+
+# navidrome
+navidrome_data_directory: /data/navidrome
+music_directory: /music
+
+# memos
+memos_data_directory: /data/memos
+
+# immich
+immich_data_directory: /data/immich
+immich_db_password: ""
+immich_db_user: ""
+immich_typesense_api_key: ""
+immich_version: "v1.66.1"
+immich_upload_directory: /immich
+
+# netdata
+netdata_data_directory: /data/netdata
+
+# homepage
+homepage_data_directory: /data/homepage
+
+# miniflux
+miniflux_data_directory: /data/miniflux
+miniflux_db_password: ""
+miniflux_db_user: ""
+miniflux_admin_username: ""
+miniflux_admin_password: ""
+
+# mattermost
+mattermost_data_directory: /data/mattermost
+mattermost_db_password: ""
+mattermost_db_user: ""
+
+# homeassistant
+homeassistant_enabled: true
+homeassistant_image_version: "stable"
