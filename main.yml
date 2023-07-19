@@ -14,24 +14,25 @@
   gather_facts: true
 
   roles:
-    - traefik
+    # - traefik
     - cloudflared
-    - echo-server
-    - bitwarden
-    - qbittorrent
-    - qbittorrentee
-    - jellyfin
-    - syncthing
-    - shiori
-    - navidrome
-    - music_download
-    - memos
-    - immich
-    - netdata
-    - homepage
-    - miniflux
-    - mattermost
-    - homeassistant
+    # - echo-server
+    # - bitwarden
+    # - qbittorrent
+    # - qbittorrentee
+    # - jellyfin
+    # - syncthing
+    # - shiori
+    # - navidrome
+    # - music_download
+    # - memos
+    # - immich
+    # - netdata
+    # - homepage
+    # - miniflux
+    # - mattermost
+    # - homeassistant
+    - rocketchat
     # - portainer
     # - nextcloud
     # - minio

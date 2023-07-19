@@ -1,0 +1,5 @@
+---
+rocketchat_enabled: false
+
+# specs
+rocketchat_memory: 1g

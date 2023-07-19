@@ -1,0 +1,52 @@
+---
+- name: Start RocketChat
+  block:
+    # - name: Create Home Assistant Directories
+    #   ansible.builtin.file:
+    #     path: "{{ item }}"
+    #     state: directory
+    #   with_items:
+    #     - "{{ rocketchat_data_directory }}/config"
+
+    - name: RocketChat mongo Docker Container
+      community.docker.docker_container:
+        name: rocketchat-mongo
+        image: "bitnami/mongodb:{{ rocketchat_mongo_version }}"
+        networks:
+          - name: homelab
+        env:
+          MONGODB_REPLICA_SET_MODE: primary
+          MONGODB_REPLICA_SET_NAME: rs0
+          MONGODB_PORT_NUMBER: "27017"
+          MONGODB_INITIAL_PRIMARY_HOST: rocketchat-mongo
+          MONGODB_INITIAL_PRIMARY_PORT_NUMBER: "27017"
+          MONGODB_ADVERTISED_HOSTNAME: rocketchat-mongo
+          MONGODB_ENABLE_JOURNAL: "true"
+          ALLOW_EMPTY_PASSWORD: "yes"
+        restart_policy: unless-stopped
+
+    - name: RocketChat Docker Container
+      community.docker.docker_container:
+        name: "{{ rocketchat_container_name }}"
+        image: rocketchat/rocket.chat:6.2.10
+        networks:
+          - name: homelab
+        restart_policy: unless-stopped
+        env:
+          MONGO_URL: "mongodb://rocketchat-mongo:27017/rocketchat?replicaSet=rs0"
+          MONGO_OPLOG_URL: "mongodb://rocketchat-mongo:27017/local?replicaSet=rs0"
+          ROOT_URL: "https://chat.{{ tunnel_domain_name }}"
+          PORT: "3000"
+          DEPLOY_METHOD: docker
+          # DEPLOY_PLATFORM: ${DEPLOY_PLATFORM:-}
+          # REG_TOKEN: ${REG_TOKEN:-}
+        # memory: "{{ rocketchat_memory }}"
+  when: rocketchat_enabled is true
+
+- name: Stop RocketChat
+  block:
+    - name: Stop RocketChat
+      community.docker.docker_container:
+        name: "{{ rocketchat_container_name }}"
+        state: absent
+  when: rocketchat_enabled is false
