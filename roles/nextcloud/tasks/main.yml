@@ -1,48 +1,69 @@
 ---
 - name: Start Nextcloud
   block:
-  # - name: Create Nextcloud Directories
-  #   ansible.builtin.file:
-  #     path: "{{ item }}"
-  #     state: directory
-  #     owner: "{{ ansible_user }}"
-  #     group: "{{ ansible_user }}"
-  #     mode: "0755"
-  #   with_items:
-  #     - "{{ nextcloud_data_directory }}"
-
-  - name: Create Nextcloud volume
-    community.docker.docker_volume:
-      name: "{{ item }}"
+  - name: Create Nextcloud Directories
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: "0755"
     with_items:
-      - nextcloud_aio_mastercontainer
+      - "{{ nextcloud_data_directory }}"
+      - "{{ nextcloud_data_directory }}/db"
+      - "{{ nextcloud_data_directory }}/nextcloud"
+
+  - name: Nextcloud db Docker Container
+    community.docker.docker_container:
+      name: nextcloud-db
+      image: postgres:15.3-alpine3.18
+      networks:
+        - name: homelab
+      env:
+        POSTGRES_PASSWORD: "{{ nextcloud_db_password }}"
+        POSTGRES_USER: "{{ nextcloud_db_user }}"
+        POSTGRES_DB: "nextcloud"
+      volumes:
+        - "{{ nextcloud_data_directory }}/db:/var/lib/postgresql/data"
+      restart_policy: always
+
+  - name: Nextcloud redis Docker Container
+    community.docker.docker_container:
+      name: nextcloud-redis
+      image: redis:6.0.20-alpine3.18
+      networks:
+        - name: homelab
+      restart_policy: always
 
   - name: Nextcloud Docker Container
     community.docker.docker_container:
       name: "{{ nextcloud_container_name }}"
-      image: "nextcloud/all-in-one:{{ nextcloud_image_version }}"
+      image: "nextcloud:{{ nextcloud_image_version }}"
       pull: true
       networks:
         - name: homelab
       volumes:
-        - "nextcloud_aio_mastercontainer:/mnt/docker-aio-config"
-        - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        - "{{ nextcloud_data_directory }}/nextcloud:/var/www/html:rw"
       env:
         TZ: "{{ timezone }}"
-        APACHE_PORT: "11000"
-      labels:
-        traefik.enable: "true"
-        traefik.http.middlewares.gzip.compress: "true"
-        traefik.http.routers.nextcloud.middlewares: "gzip,nextcloud-redirect"
-        traefik.http.routers.nextcloud.rule: "Host(`nextcloud.{{ domain_name }}`) || Host(`nextcloud.{{ tunnel_domain_name }}`)"
-        traefik.http.routers.nextcloud.entrypoints: "websecure"
-        traefik.http.routers.nextcloud.tls.certresolver: "myresolver"
-        traefik.http.routers.nextcloud.service: "nextcloud"
-        traefik.http.services.nextcloud.loadbalancer.servers: "url: http://{{ nextcloud_container_name }}:11000"
-        traefik.middlewares.nextcloud-secure-headers.headers.hostsProxyHeaders: "X-Forwarded-Host"
-        traefik.middlewares.nextcloud-secure-headers.headers.referrerPolicy: "same-origin"
-        traefik.middlewares.https-redirect.redirectscheme.scheme: "https"
-        traefik.middlewares.nextcloud-chain.chain.middlewares: "nextcloud-secure-headers,https-redirect"
+        POSTGRES_HOST: "nextcloud-db"
+        REDIS_HOST: "nextcloud-redis"
+        POSTGRES_PASSWORD: "{{ nextcloud_db_password }}"
+        POSTGRES_USER: "{{ nextcloud_db_user }}"
+        POSTGRES_DB: "nextcloud"
+      restart_policy: always
+
+  - name: Nextcloud cron Docker Container
+    community.docker.docker_container:
+      name: nextcloud-cron
+      image: "nextcloud:{{ nextcloud_image_version }}"
+      pull: true
+      networks:
+        - name: homelab
+      volumes:
+        - "{{ nextcloud_data_directory }}/nextcloud:/var/www/html:rw"
+      entrypoint:
+        - "/cron.sh"
       restart_policy: always
   when: nextcloud_enabled is true
 

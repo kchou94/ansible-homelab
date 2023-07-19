@@ -35,14 +35,11 @@ ingress:
   - hostname: "ha.{{ tunnel_domain_name }}"
     service: http://homeassistant:8123
 
-  # - hostname: "nextcloud.{{ tunnel_domain_name }}"
-  #   service: https://nextcloud.{{ domain_name }}
+  - hostname: "nextcloud.{{ tunnel_domain_name }}"
+    service: http://{{ nextcloud_container_name }}:80
 
   # - hostname: "chat.{{ tunnel_domain_name }}"
   #   service: http://rocketchat:3000
-
-  # - hostname: "nextcloud.{{ tunnel_domain_name }}"
-  #   service: http://nextcloud:80
 
   # - hostname: "bookstack.{{ tunnel_domain_name }}"
   #   service: http://bookstack:80

@@ -33,9 +33,8 @@
     - mattermost
     - homeassistant
     - rocketchat
-    - nextcloud
     - uptime-kuma
+    - nextcloud
     # - portainer
-    # - nextcloud
     # - minio
     # - bookstack

@@ -1,4 +1,6 @@
 ---
 nextcloud_enabled: false
-nextcloud_container_name: "nextcloud-aio-mastercontainer"
-nextcloud_image_version: "0.49.3"
+nextcloud_container_name: "nextcloud"
+nextcloud_image_version: "27.0.0-apache"
+nextcloud_db_user: "nextcloud"
+nextcloud_db_password: "nextcloud"
