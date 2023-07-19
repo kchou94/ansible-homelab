@@ -14,8 +14,8 @@ ingress:
   - hostname: "shiori.{{ tunnel_domain_name }}"
     service: http://shiori:8080
 
-  - hostname: "navidrome.{{ tunnel_domain_name }}"
-    service: http://navidrome:4533
+  - hostname: "music.{{ tunnel_domain_name }}"
+    service: https://music.{{ domain_name }}
 
   - hostname: "memos.{{ tunnel_domain_name }}"
     service: http://memos:5230

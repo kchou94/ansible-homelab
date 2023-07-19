@@ -12,7 +12,8 @@
 - name: Navidrome Docker Container
   community.docker.docker_container:
     name: navidrome
-    image: deluan/navidrome:latest
+    image: "deluan/navidrome:{{ navidrome_image_version }}"
+    pull: true
     networks:
       - name: homelab
     volumes:
@@ -24,12 +25,13 @@
       ND_LOGLEVEL: info
       ND_SESSIONTIMEOUT: 168h
       ND_MUSICFOLDER: "/music"
-    # labels:
-    #   traefik.enable: "true"
-    #   traefik.http.routers.navidrome.rule: "Host(`navidrome.{{ domain_name }}`)"
-    #   traefik.http.routers.navidrome.entrypoints: "websecure"
-    #   traefik.http.routers.navidrome.tls.certresolver: "myresolver"
-    #   traefik.http.routers.navidrome.tls.domains[0].main: "{{ domain_name }}"
-    #   traefik.http.routers.navidrome.tls.domains[0].sans: "*.{{ domain_name }}"
-    #   traefik.http.services.navidrome.loadbalancer.server.port: "8080"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.navidrome.middlewares: "gzip"
+      traefik.http.routers.navidrome.rule: "Host(`music.{{ domain_name }}`) || Host(`music.{{ tunnel_domain_name }}`)"
+      traefik.http.routers.navidrome.entrypoints: "websecure"
+      traefik.http.routers.navidrome.tls.certresolver: "myresolver"
+      # traefik.http.routers.navidrome.tls.domains[0].main: "{{ domain_name }}"
+      # traefik.http.routers.navidrome.tls.domains[0].sans: "*.{{ domain_name }}"
+      traefik.http.services.navidrome.loadbalancer.server.port: "4533"
     restart_policy: unless-stopped
