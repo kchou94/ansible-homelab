@@ -10,6 +10,7 @@
       - "{{ music_directory }}://workspace/music:rw"
     labels:
       traefik.enable: "true"
+      traefik.http.middlewares.gzip.compress: "true"
       traefik.http.routers.music-download.middlewares: "gzip"
       traefik.http.routers.music-download.rule: "Host(`music-download.{{ domain_name }}`)"
       traefik.http.routers.music-download.entrypoints: "websecure"

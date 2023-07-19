@@ -1,0 +1,55 @@
+---
+- name: Start Nextcloud
+  block:
+  # - name: Create Nextcloud Directories
+  #   ansible.builtin.file:
+  #     path: "{{ item }}"
+  #     state: directory
+  #     owner: "{{ ansible_user }}"
+  #     group: "{{ ansible_user }}"
+  #     mode: "0755"
+  #   with_items:
+  #     - "{{ nextcloud_data_directory }}"
+
+  - name: Create Nextcloud volume
+    community.docker.docker_volume:
+      name: "{{ item }}"
+    with_items:
+      - nextcloud_aio_mastercontainer
+
+  - name: Nextcloud Docker Container
+    community.docker.docker_container:
+      name: "{{ nextcloud_container_name }}"
+      image: "nextcloud/all-in-one:{{ nextcloud_image_version }}"
+      pull: true
+      networks:
+        - name: homelab
+      volumes:
+        - "nextcloud_aio_mastercontainer:/mnt/docker-aio-config"
+        - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      env:
+        TZ: "{{ timezone }}"
+        APACHE_PORT: "11000"
+      labels:
+        traefik.enable: "true"
+        traefik.http.middlewares.gzip.compress: "true"
+        traefik.http.routers.nextcloud.middlewares: "gzip,nextcloud-redirect"
+        traefik.http.routers.nextcloud.rule: "Host(`nextcloud.{{ domain_name }}`) || Host(`nextcloud.{{ tunnel_domain_name }}`)"
+        traefik.http.routers.nextcloud.entrypoints: "websecure"
+        traefik.http.routers.nextcloud.tls.certresolver: "myresolver"
+        traefik.http.routers.nextcloud.service: "nextcloud"
+        traefik.http.services.nextcloud.loadbalancer.servers: "url: http://{{ nextcloud_container_name }}:11000"
+        traefik.middlewares.nextcloud-secure-headers.headers.hostsProxyHeaders: "X-Forwarded-Host"
+        traefik.middlewares.nextcloud-secure-headers.headers.referrerPolicy: "same-origin"
+        traefik.middlewares.https-redirect.redirectscheme.scheme: "https"
+        traefik.middlewares.nextcloud-chain.chain.middlewares: "nextcloud-secure-headers,https-redirect"
+      restart_policy: always
+  when: nextcloud_enabled is true
+
+- name: Stop Nextcloud
+  block:
+    - name: Stop Nextcloud
+      community.docker.docker_container:
+        name: "{{ nextcloud_container_name }}"
+        state: absent
+  when: nextcloud_enabled is false

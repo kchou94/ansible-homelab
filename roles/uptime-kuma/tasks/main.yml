@@ -1,0 +1,41 @@
+---
+- name: Start uptime-kuma
+  block:
+  - name: Create uptime-kuma Directories
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: "0755"
+    with_items:
+      - "{{ uptime_kuma_data_directory }}"
+
+  - name: Uptime-kuma Docker Container
+    community.docker.docker_container:
+      name: "{{ uptime_kuma_container_name }}"
+      image: "louislam/uptime-kuma:{{ uptime_kuma_image_version }}"
+      pull: true
+      networks:
+        - name: homelab
+      volumes:
+        - "{{ uptime_kuma_data_directory }}:/app/data"
+      env:
+        TZ: "{{ timezone }}"
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.uptime-kuma.middlewares: "gzip"
+        traefik.http.routers.uptime-kuma.rule: "Host(`uptime.{{ domain_name }}`)"
+        traefik.http.routers.uptime-kuma.entrypoints: "websecure"
+        traefik.http.routers.uptime-kuma.tls.certresolver: "myresolver"
+        traefik.http.services.uptime-kuma.loadbalancer.server.port: "3001"
+      restart_policy: always
+  when: uptime_kuma_enabled is true
+
+- name: Stop uptime-kuma
+  block:
+    - name: Stop uptime-kuma
+      community.docker.docker_container:
+        name: "{{ uptime_kuma_container_name }}"
+        state: absent
+  when: uptime_kuma_enabled is false
