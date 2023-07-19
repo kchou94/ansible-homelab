@@ -40,7 +40,7 @@
     env:
       NO_AUTOUPDATE: "true"
       TUNNEL_CRED_FILE: /etc/cloudflared/credentials.json
-      TUNNEL_TRANSPORT_PROTOCOL: http2
+      TUNNEL_TRANSPORT_PROTOCOL: auto
     restart_policy: unless-stopped
     recreate: "{{ template_config is changed }}"
 

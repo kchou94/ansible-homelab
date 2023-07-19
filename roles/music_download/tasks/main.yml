@@ -11,10 +11,10 @@
       - "{{ music_directory }}://workspace/music:rw"
     labels:
       traefik.enable: "true"
-      traefik.http.routers.music_download.rule: "Host(`music_download.{{ domain_name }}`)"
-      traefik.http.routers.music_download.entrypoints: "websecure"
-      traefik.http.routers.music_download.tls.certresolver: "myresolver"
-      traefik.http.routers.music_download.tls.domains[0].main: "{{ domain_name }}"
-      traefik.http.routers.music_download.tls.domains[0].sans: "*.{{ domain_name }}"
-      traefik.http.services.music_download.loadbalancer.server.port: "8899"
+      traefik.http.routers.music-download.rule: "Host(`music-download.{{ domain_name }}`)"
+      traefik.http.routers.music-download.entrypoints: "websecure"
+      traefik.http.routers.music-download.tls.certresolver: "myresolver"
+      traefik.http.routers.music-download.tls.domains[0].main: "{{ domain_name }}"
+      traefik.http.routers.music-download.tls.domains[0].sans: "*.{{ domain_name }}"
+      traefik.http.services.music-download.loadbalancer.server.port: "8899"
     restart_policy: unless-stopped

@@ -1,4 +1,7 @@
 ingress:
+  # - hostname: "traefik.{{ tunnel_domain_name }}"
+  #   service: https://traefik.{{ domain_name }}
+
   - hostname: "echo-server.{{ tunnel_domain_name }}"
     service: http://echo-server:8080
 

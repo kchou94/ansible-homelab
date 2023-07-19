@@ -19,11 +19,20 @@
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
     command:
+      - "--global.sendanonymoususage=false"
+      - "--global.checknewversion=false"
+      - "--api=true"
+      - "--api.dashboard=true"
       - "--api.insecure=true"
+      - "--api.debug=false"
+      - "--ping=true"
+      - "--log.level=INFO"
+      - "--log.format=common"
       - "--providers.docker=true"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
       - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=homelab"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.dnschallenge=true"
@@ -37,7 +46,42 @@
     env:
       CF_API_EMAIL: "{{ cloudflare_email }}"
       CF_API_KEY: "{{ cloudflare_api_key }}"
-    restart_policy: unless-stopped
+      TZ: "{{ timezone }}"
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: "homelab"
+      traefik.http.middlewares.gzip.compress: "true"
+      # traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: "https"
+      # traefik.http.middlewares.redirect-to-https.redirectscheme.permanent: "false"
+      # traefik.http.routers.traefik-dashboard.middlewares: "redirect-to-https"
+      # traefik.http.routers.traefik-dashboard.rule: "Host(`traefik.{{ domain_name }}`)"
+      # traefik.http.routers.traefik-dashboard.entrypoints: "web"
+      # traefik.http.routers.traefik-dashboard.service: "dashboard@internal"
+      traefik.http.routers.traefik-dashboard-secure.middlewares: "gzip"
+      traefik.http.routers.traefik-dashboard-secure.rule: "Host(`traefik.{{ domain_name }}`)"
+      # traefik.http.routers.traefik-dashboard-secure.rule: "Host(`traefik.{{ domain_name }}`) || Host(`traefik.{{ tunnel_domain_name }}`)"
+      traefik.http.routers.traefik-dashboard-secure.entrypoints: "websecure"
+      # traefik.http.routers.traefik-dashboard-secure.tls: "true"
+      traefik.http.routers.traefik-dashboard-secure.tls.certresolver: "myresolver"
+      # traefik.http.routers.traefik-dashboard-secure.tls.domains[0].main: "{{ domain_name }}"
+      # traefik.http.routers.traefik-dashboard-secure.tls.domains[0].sans: "*.{{ domain_name }}"
+      traefik.http.routers.traefik-dashboard-secure.service: "dashboard@internal"
+      traefik.http.routers.traefik-dashboard-api-secure.middlewares: "gzip"
+      traefik.http.routers.traefik-dashboard-api-secure.rule: "Host(`traefik.{{ domain_name }}`) && PathPrefix(`/api`)"
+      traefik.http.routers.traefik-dashboard-api-secure.entrypoints: "websecure"
+      # traefik.http.routers.traefik-dashboard-api-secure.tls: "true"
+      traefik.http.routers.traefik-dashboard-api-secure.tls.certresolver: "myresolver"
+      # traefik.http.routers.traefik-dashboard-api-secure.tls.domains[0].main: "{{ domain_name }}"
+      # traefik.http.routers.traefik-dashboard-api-secure.tls.domains[0].sans: "*.{{ domain_name }}"
+      traefik.http.routers.traefik-dashboard-api-secure.service: "api@internal"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider localhost:8080/ping || exit 1"]
+      interval: 3s
+      retries: 10
+    log_driver: "json-file"
+    log_options:
+      max-size: "1m"
+    restart_policy: always
 
 - name: Create whoami Container
   community.docker.docker_container:
