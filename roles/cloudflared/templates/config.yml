@@ -21,7 +21,7 @@ ingress:
     service: http://memos:5230
 
   - hostname: "immich.{{ tunnel_domain_name }}"
-    service: http://immich-proxy:8080
+    service: https://immich.{{ domain_name }}
 
   - hostname: "homepage.{{ tunnel_domain_name }}"
     service: http://homepage:3000
@@ -34,9 +34,6 @@ ingress:
 
   - hostname: "ha.{{ tunnel_domain_name }}"
     service: http://homeassistant:8123
-
-  - hostname: "nextcloud.{{ tunnel_domain_name }}"
-    service: http://{{ nextcloud_container_name }}:80
 
   # - hostname: "chat.{{ tunnel_domain_name }}"
   #   service: http://rocketchat:3000

@@ -152,4 +152,10 @@
       IMMICH_WEB_URL: "http://immich-web:3000"
       IMMICH_SERVER_URL: "http://immich-server:3001"
       IMMICH_MACHINE_LEARNING_URL: "http://immich-machine-learning:3003"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.immich.rule: "Host(`immich.{{ domain_name }}`)"
+      traefik.http.routers.immich.entrypoints: "websecure"
+      traefik.http.routers.immich.tls.certresolver: "myresolver"
+      traefik.http.services.immich.loadbalancer.server.port: "8080"
     restart_policy: unless-stopped

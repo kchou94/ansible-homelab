@@ -51,6 +51,13 @@
         POSTGRES_PASSWORD: "{{ nextcloud_db_password }}"
         POSTGRES_USER: "{{ nextcloud_db_user }}"
         POSTGRES_DB: "nextcloud"
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.nextcloud.middlewares: "gzip"
+        traefik.http.routers.nextcloud.rule: "Host(`nextcloud.{{ domain_name }}`)"
+        traefik.http.routers.nextcloud.entrypoints: "websecure"
+        traefik.http.routers.nextcloud.tls.certresolver: "myresolver"
+        traefik.http.services.nextcloud.loadbalancer.server.port: "80"
       restart_policy: always
 
   - name: Nextcloud cron Docker Container

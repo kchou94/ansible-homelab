@@ -34,7 +34,7 @@
     - homeassistant
     - rocketchat
     - uptime-kuma
-    - nextcloud
+    # - nextcloud
     # - portainer
     # - minio
     # - bookstack
