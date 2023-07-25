@@ -13,7 +13,7 @@
 - name: Traefik Docker Container
   community.docker.docker_container:
     name: traefik
-    image: traefik:v2.10.3
+    image: traefik:v2.10.4
     networks:
       - name: homelab
     ports:
