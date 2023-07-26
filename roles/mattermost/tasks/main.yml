@@ -46,7 +46,7 @@
 - name: Mattermost Docker Container
   community.docker.docker_container:
     name: mattermost
-    image: mattermost/mattermost-team-edition:8.0.0
+    image: mattermost/mattermost-team-edition:8.0.1
     networks:
       - name: homelab
     # ports:
