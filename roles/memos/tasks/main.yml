@@ -10,7 +10,7 @@
 - name: Memos Docker Container
   community.docker.docker_container:
     name: memos
-    image: neosmemo/memos:0.14.0
+    image: neosmemo/memos:0.14.2
     networks:
       - name: homelab
     volumes:
