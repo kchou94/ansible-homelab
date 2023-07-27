@@ -1,53 +1,8 @@
 ingress:
-  # - hostname: "traefik.{{ tunnel_domain_name }}"
-  #   service: https://traefik.{{ domain_name }}
-
   - hostname: "echo-server.{{ cloudflared_tunnel_domain_name }}"
     service: http://echo-server:8080
 
   - hostname: "joplin.{{ cloudflared_tunnel_domain_name }}"
     service: http://joplin:22300
-
-  # - hostname: "vaultwarden.{{ tunnel_domain_name }}"
-  #   service: http://bitwarden:80
-
-  # - hostname: "vaultwarden.{{ tunnel_domain_name }}/notifications/hub"
-  #   service: http://bitwarden:3012
-
-  # - hostname: "shiori.{{ tunnel_domain_name }}"
-  #   service: http://shiori:8080
-
-  # - hostname: "music.{{ tunnel_domain_name }}"
-  #   service: https://music.{{ domain_name }}
-
-  # - hostname: "memos.{{ tunnel_domain_name }}"
-  #   service: http://memos:5230
-
-  # - hostname: "immich.{{ tunnel_domain_name }}"
-  #   service: https://immich.{{ domain_name }}
-
-  # - hostname: "homepage.{{ tunnel_domain_name }}"
-  #   service: http://homepage:3000
-
-  # - hostname: "miniflux.{{ tunnel_domain_name }}"
-  #   service: http://miniflux:8080
-
-  # - hostname: "mm.{{ tunnel_domain_name }}"
-  #   service: http://mattermost:8065
-
-  # - hostname: "ha.{{ tunnel_domain_name }}"
-  #   service: http://homeassistant:8123
-
-  # - hostname: "nextcloud.{{ tunnel_domain_name }}"
-  #   service: https://nextcloud.{{ domain_name }}
-
-  # - hostname: "chat.{{ tunnel_domain_name }}"
-  #   service: http://rocketchat:3000
-
-  # - hostname: "bookstack.{{ tunnel_domain_name }}"
-  #   service: http://bookstack:80
-
-  # - hostname: "sd.{{ tunnel_domain_name }}"
-  #   service: http://192.168.50.4:7860
 
   - service: http_status:404
