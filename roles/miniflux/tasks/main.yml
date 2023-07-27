@@ -31,7 +31,7 @@
 - name: Miniflux Docker Container
   community.docker.docker_container:
     name: miniflux
-    image: miniflux/miniflux:2.0.45
+    image: miniflux/miniflux:2.0.46
     networks:
       - name: homelab
     env:
