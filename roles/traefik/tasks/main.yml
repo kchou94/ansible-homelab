@@ -35,12 +35,15 @@
         - "--providers.docker.exposedbydefault=false"
         - "--providers.docker.network=homelab"
         - "--entrypoints.web.address=:80"
+        - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
         - "--entrypoints.websecure.address=:443"
+        - "--entrypoints.websecure.http.tls.certresolver=myresolver"
         - "--certificatesresolvers.myresolver.acme.dnschallenge=true"
         - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare"
         - "--certificatesresolvers.myresolver.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
         - "--certificatesresolvers.myresolver.acme.email={{ acme_email }}"
         - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+        - "--metrics.prometheus=true"
       volumes:
         - "{{ traefik_data_directory }}/letsencrypt:/letsencrypt:rw"
         - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -80,6 +83,7 @@
         traefik.enable: "true"
         traefik.http.routers.whoami.rule: "Host(`whoami.{{ traefik_domain_name }}`)"
         traefik.http.routers.whoami.entrypoints: "websecure"
+        traefik.http.routers.whoami.middlewares: "gzip"
         traefik.http.routers.whoami.tls.certresolver: "myresolver"
         traefik.http.services.whoami.loadbalancer.server.port: "80"
   when: traefik_enabled is true

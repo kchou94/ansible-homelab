@@ -43,6 +43,14 @@
         POSTGRES_USER: "{{ joplin_postgres_user }}"
         POSTGRES_HOST: "{{ joplin_postgres_container_name }}"
         MAX_TIME_DRIFT: "0"
+        MAILER_ENABLED: "1"
+        MAILER_HOST: "{{ mailer_host }}"
+        MAILER_PORT: "587"
+        MAILER_SECURITY: "starttls"
+        MAILER_AUTH_USER: "{{ mailer_auth_user }}"
+        MAILER_AUTH_PASSWORD: "{{ mailer_auth_password }}"
+        MAILER_NOREPLY_NAME: "Joplin"
+        MAILER_NOREPLY_EMAIL: "{{ mailer_auth_user }}"
       restart_policy: unless-stopped
   when: joplin_enabled is true
 
