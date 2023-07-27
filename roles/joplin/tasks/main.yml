@@ -30,6 +30,8 @@
       image: joplin/server:2.12.1-beta
       networks:
         - name: homelab
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
       env:
         TZ: "{{ timezone }}"
         APP_PORT: "22300"
@@ -40,6 +42,7 @@
         POSTGRES_PASSWORD: "{{ joplin_postgres_password }}"
         POSTGRES_USER: "{{ joplin_postgres_user }}"
         POSTGRES_HOST: "{{ joplin_postgres_container_name }}"
+        MAX_TIME_DRIFT: "0"
       restart_policy: unless-stopped
   when: joplin_enabled is true
 
