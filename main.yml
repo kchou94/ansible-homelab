@@ -17,23 +17,23 @@
     - traefik
     - cloudflared
     - echo-server
-    - bitwarden
-    - qbittorrent
-    - qbittorrentee
-    - jellyfin
-    - syncthing
-    - shiori
-    - navidrome
-    - music_download
-    - memos
-    - immich
-    - netdata
-    - homepage
-    - miniflux
-    - mattermost
-    - homeassistant
-    - rocketchat
-    - uptime-kuma
+    # - bitwarden
+    # - qbittorrent
+    # - qbittorrentee
+    # - jellyfin
+    # - syncthing
+    # - shiori
+    # - navidrome
+    # - music_download
+    # - memos
+    # - immich
+    # - netdata
+    # - homepage
+    # - miniflux
+    # - mattermost
+    # - homeassistant
+    # - rocketchat
+    # - uptime-kuma
     # - nextcloud
     # - portainer
     # - minio
