@@ -1,0 +1,7 @@
+---
+loki_enabled: false
+loki_data_directory: "/data/loki"
+loki_gateway_container_name: "loki-gateway"
+loki_read_container_name: "loki-read"
+loki_write_container_name: "loki-write"
+loki_backend_container_name: "loki-backend"

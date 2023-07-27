@@ -1,0 +1,4 @@
+---
+grafana_enabled: false
+grafana_data_directory: "/data/grafana"
+grafana_container_name: "grafana"

@@ -1,0 +1,51 @@
+---
+- name: Start Grafana
+  block:
+  - name: Create Grafana Directories
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: "0755"
+    with_items:
+      - "{{ grafana_data_directory }}"
+      # - "{{ grafana_data_directory }}/data"
+  - name: Template Grafana datasources.yaml
+    ansible.builtin.template:
+      src: datasources.yaml
+      dest: "{{ grafana_data_directory }}/datasources.yaml"
+      mode: "0755"
+    register: template_config
+  - name: Grafana Docker Container
+    community.docker.docker_container:
+      name: "{{ grafana_container_name }}"
+      image: grafana/grafana:10.0.3
+      networks:
+        - name: homelab
+      volumes:
+        # - "{{ grafana_data_directory }}/data:/var/lib/grafana"
+        - "{{ grafana_data_directory }}/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml"
+      env:
+        TZ: "{{ timezone }}"
+        GF_AUTH_ANONYMOUS_ENABLED: "true"
+        GF_AUTH_DISABLE_LOGIN_FORM: "true"
+        GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.grafana.rule: "Host(`grafana.{{ traefik_domain_name }}`)"
+        traefik.http.routers.grafana.entrypoints: "websecure"
+        traefik.http.routers.grafana.middlewares: "gzip"
+        traefik.http.routers.grafana.tls.certresolver: "myresolver"
+        traefik.http.services.grafana.loadbalancer.server.port: "3000"
+      restart_policy: unless-stopped
+      recreate: "{{ template_config is changed }}"
+  when: grafana_enabled is true
+
+- name: Stop Grafana
+  block:
+    - name: Stop Grafana
+      community.docker.docker_container:
+        name: "{{ grafana_container_name }}"
+        state: absent
+  when: grafana_enabled is false
