@@ -50,7 +50,7 @@
 - name: Immich server Docker Container
   community.docker.docker_container:
     name: immich-server
-    image: ghcr.io/immich-app/immich-server:v1.68.0
+    image: ghcr.io/immich-app/immich-server:v1.70.0
     command:
       - "start.sh"
       - "immich"
@@ -74,7 +74,7 @@
 - name: Immich microservices Docker Container
   community.docker.docker_container:
     name: immich-microservices
-    image: ghcr.io/immich-app/immich-server:v1.68.0
+    image: ghcr.io/immich-app/immich-server:v1.70.0
     command:
       - "start.sh"
       - "microservices"
