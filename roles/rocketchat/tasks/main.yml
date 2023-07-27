@@ -28,7 +28,7 @@
     - name: RocketChat Docker Container
       community.docker.docker_container:
         name: "{{ rocketchat_container_name }}"
-        image: rocketchat/rocket.chat:6.2.10
+        image: rocketchat/rocket.chat:6.2.11
         networks:
           - name: homelab
         restart_policy: unless-stopped
