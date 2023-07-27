@@ -138,7 +138,7 @@
 - name: Immich proxy Docker Container
   community.docker.docker_container:
     name: immich-proxy
-    image: ghcr.io/immich-app/immich-proxy:v1.68.0
+    image: ghcr.io/immich-app/immich-proxy:v1.70.0
     networks:
       - name: homelab
     env:
