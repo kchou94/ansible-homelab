@@ -1,0 +1,8 @@
+---
+joplin_enabled: false
+joplin_data_directory: "/data/joplin"
+joplin_postgres_container_name: "joplin-db"
+joplin_postgres_password: "joplin"
+joplin_postgres_user: "joplin"
+joplin_postgres_database: "joplin"
+joplin_container_name: "joplin"

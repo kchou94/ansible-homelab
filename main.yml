@@ -1,13 +1,3 @@
----
-# - name: Ansible-homelab
-#   hosts: all
-#   become: true
-#   gather_facts: true
-
-#   roles:
-#     - geerlingguy.docker
-#     - general
-
 - name: Ansible-homelab
   hosts: y9000p
   become: true
@@ -16,27 +6,3 @@
   roles:
     - geerlingguy.docker
     - general
-    # - traefik
-    # - cloudflared
-    # - echo-server
-    # - bitwarden
-    # - qbittorrent
-    # - qbittorrentee
-    # - jellyfin
-    # - syncthing
-    # - shiori
-    # - navidrome
-    # - music_download
-    # - memos
-    # - immich
-    # - netdata
-    # - homepage
-    # - miniflux
-    # - mattermost
-    # - homeassistant
-    # - rocketchat
-    # - uptime-kuma
-    # - nextcloud
-    # - portainer
-    # - minio
-    # - bookstack

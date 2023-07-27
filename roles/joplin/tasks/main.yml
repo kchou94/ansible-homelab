@@ -1,0 +1,56 @@
+---
+- name: Start Joplin
+  block:
+  - name: Create Joplin Directories
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: "0755"
+    with_items:
+      - "{{ joplin_data_directory }}"
+      - "{{ joplin_data_directory }}/db"
+  - name: Joplin Postgres Docker Container
+    community.docker.docker_container:
+      name: "{{ joplin_postgres_container_name }}"
+      image: postgres:15.3-bookworm
+      networks:
+        - name: homelab
+      env:
+        POSTGRES_PASSWORD: "{{ joplin_postgres_password }}"
+        POSTGRES_USER: "{{ joplin_postgres_user }}"
+        POSTGRES_DB: "{{ joplin_postgres_database }}"
+      volumes:
+        - "{{ joplin_data_directory }}/db:/var/lib/postgresql/data"
+      restart_policy: unless-stopped
+  - name: Joplin Docker Container
+    community.docker.docker_container:
+      name: "{{ joplin_container_name }}"
+      image: joplin/server:2.12.1-beta
+      networks:
+        - name: homelab
+      env:
+        TZ: "{{ timezone }}"
+        APP_PORT: "22300"
+        APP_BASE_URL: "https://joplin.{{ cloudflared_tunnel_domain_name }}"
+        DB_CLIENT: "pg"
+        POSTGRES_DATABASE: "{{ joplin_postgres_database }}"
+        POSTGRES_PORT: "5432"
+        POSTGRES_PASSWORD: "{{ joplin_postgres_password }}"
+        POSTGRES_USER: "{{ joplin_postgres_user }}"
+        POSTGRES_HOST: "{{ joplin_postgres_container_name }}"
+      restart_policy: unless-stopped
+  when: joplin_enabled is true
+
+- name: Stop Joplin
+  block:
+    - name: Stop Joplin
+      community.docker.docker_container:
+        name: "{{ joplin_container_name }}"
+        state: absent
+    - name: Stop Joplin Postgres
+      community.docker.docker_container:
+        name: "{{ joplin_postgres_container_name }}"
+        state: absent
+  when: joplin_enabled is false

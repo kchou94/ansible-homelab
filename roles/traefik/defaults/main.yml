@@ -1,0 +1,7 @@
+---
+traefik_enabled: false
+traefik_container_name: "traefik"
+acme_email: ""
+cloudflare_email: ""
+cloudflare_api_key: ""
+traefik_domain_name: ""

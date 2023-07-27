@@ -5,6 +5,9 @@ ingress:
   - hostname: "echo-server.{{ tunnel_domain_name }}"
     service: http://echo-server:8080
 
+  - hostname: "joplin.{{ tunnel_domain_name }}"
+    service: http://joplin:22300
+
   # - hostname: "vaultwarden.{{ tunnel_domain_name }}"
   #   service: http://bitwarden:80
 

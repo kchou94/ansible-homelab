@@ -1,7 +1,18 @@
 ---
-- name: Create echo-server Container
-  community.docker.docker_container:
-    name: echo-server
-    image: jmalloc/echo-server:0.3.5
-    networks:
-      - name: homelab
+- name: Start Echo Server
+  block:
+  - name: Create Echo Server Container
+    community.docker.docker_container:
+      name: echo-server
+      image: jmalloc/echo-server:0.3.5
+      networks:
+        - name: homelab
+  when: echo_server_enabled is true
+
+- name: Stop Echo Server
+  block:
+    - name: Stop Echo Server
+      community.docker.docker_container:
+        name: echo-server
+        state: absent
+  when: echo_server_enabled is false
