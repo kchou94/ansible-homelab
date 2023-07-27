@@ -1,0 +1,36 @@
+---
+- name: Start Siyuan
+  block:
+  - name: Create Siyuan Directories
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: "0755"
+    with_items:
+      - "{{ siyuan_data_directory }}"
+      - "{{ siyuan_data_directory }}/workspace"
+  - name: siyuan Docker Container
+    community.docker.docker_container:
+      name: "{{ siyuan_container_name }}"
+      image: b3log/siyuan:v2.9.7
+      networks:
+        - name: homelab
+      volumes:
+        - "{{ siyuan_data_directory }}/workspace:/siyuan/workspace"
+      env:
+        TZ: "{{ timezone }}"
+      command:
+        - "--workspace=/siyuan/workspace"
+      user: 1000:1000
+      restart_policy: unless-stopped
+  when: siyuan_enabled is true
+
+- name: Stop Siyuan
+  block:
+    - name: Stop Siyuan
+      community.docker.docker_container:
+        name: "{{ siyuan_container_name }}"
+        state: absent
+  when: siyuan_enabled is false

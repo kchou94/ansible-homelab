@@ -1,0 +1,4 @@
+---
+siyuan_enabled: false
+siyuan_data_directory: "/data/siyuan"
+siyuan_container_name: "siyuan"
