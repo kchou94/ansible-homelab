@@ -32,7 +32,7 @@
         - "--config"
         - "/etc/cloudflared/config.yml"
         - "run"
-        - "{{ tunnel_id }}"
+        - "{{ cloudflared_tunnel_id }}"
       volumes:
         - "{{ cloudflared_data_directory }}/config.yml:/etc/cloudflared/config.yml"
         - "{{ cloudflared_data_directory }}/credentials.json:/etc/cloudflared/credentials.json"
@@ -44,12 +44,12 @@
       recreate: "{{ template_config is changed }}"
   - name: Create DNS Record
     ansible.builtin.command: >
-      cloudflared tunnel route dns {{ tunnel_id }} {{ tunnel_domain_name }}
+      cloudflared tunnel route dns {{ cloudflared_tunnel_id }} {{ cloudflared_tunnel_domain_name }}
     register: dns_output
     changed_when: dns_output.rc != 0
   - name: Create DNS Record
     ansible.builtin.command: >
-      cloudflared tunnel route dns {{ tunnel_id }} *.{{ tunnel_domain_name }}
+      cloudflared tunnel route dns {{ cloudflared_tunnel_id }} *.{{ cloudflared_tunnel_domain_name }}
     register: dns_output
     changed_when: dns_output.rc != 0
   when: cloudflared_enabled is true

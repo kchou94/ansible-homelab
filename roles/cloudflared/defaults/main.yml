@@ -2,8 +2,8 @@
 cloudflared_enabled: false
 cloudflared_data_directory: "/data/cloudflared"
 cloudflared_container_name: "cloudflared"
-account_tag: ""
-tunnel_secret: ""
-tunnel_id: ""
+cloudflared_account_tag: ""
+cloudflared_tunnel_secret: ""
+cloudflared_tunnel_id: ""
 TUNNEL_ORIGIN_CERT: "/etc/cloudflared/cert.pem"
 cloudflared_tunnel_domain_name: ""

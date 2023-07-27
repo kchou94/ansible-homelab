@@ -2,10 +2,10 @@ ingress:
   # - hostname: "traefik.{{ tunnel_domain_name }}"
   #   service: https://traefik.{{ domain_name }}
 
-  - hostname: "echo-server.{{ tunnel_domain_name }}"
+  - hostname: "echo-server.{{ cloudflared_tunnel_domain_name }}"
     service: http://echo-server:8080
 
-  - hostname: "joplin.{{ tunnel_domain_name }}"
+  - hostname: "joplin.{{ cloudflared_tunnel_domain_name }}"
     service: http://joplin:22300
 
   # - hostname: "vaultwarden.{{ tunnel_domain_name }}"
