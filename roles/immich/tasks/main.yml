@@ -98,7 +98,7 @@
 - name: Immich machine-learning Docker Container
   community.docker.docker_container:
     name: immich-machine-learning
-    image: ghcr.io/immich-app/immich-machine-learning:v1.68.0
+    image: ghcr.io/immich-app/immich-machine-learning:v1.70.0
     networks:
       - name: homelab
     volumes:
