@@ -24,6 +24,18 @@
       command:
         - "--workspace=/siyuan/workspace"
       user: 1000:1000
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.siyuan.rule: "Host(`siyuan.{{ traefik_domain_name }}`)"
+        traefik.http.routers.siyuan.entrypoints: "websecure"
+        traefik.http.routers.siyuan.middlewares: "gzip"
+        traefik.http.routers.siyuan.tls.certresolver: "myresolver"
+        traefik.http.services.siyuan.loadbalancer.server.port: "6806"
+        traefik.http.routers.siyuan-ws.rule: "Host(`siyuan.{{ traefik_domain_name }}`) && PathPrefix(`/ws`)"
+        traefik.http.routers.siyuan-ws.entrypoints: "websecure"
+        traefik.http.routers.siyuan-ws.middlewares: "gzip"
+        traefik.http.routers.siyuan-ws.tls.certresolver: "myresolver"
+        # traefik.http.services.siyuan-ws.loadbalancer.server.port: "6806"
       restart_policy: unless-stopped
   when: siyuan_enabled is true
 
