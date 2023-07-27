@@ -10,7 +10,7 @@
 - name: Bitwarden Docker Container
   community.docker.docker_container:
     name: bitwarden
-    image: vaultwarden/server:1.29.0
+    image: vaultwarden/server:1.29.1
     networks:
       - name: homelab
     volumes:
