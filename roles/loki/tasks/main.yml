@@ -26,9 +26,10 @@
       mode: "0755"
     register: loki_rules_template_config
   - name: Loki Read Docker Container
-    community.docker.docker_container:
+    community.docker.docker_swarm_service:
       name: "{{ loki_read_container_name }}"
       image: grafana/loki:2.8.3
+      replicas: "2"
       networks:
         - name: homelab
       command:
@@ -42,9 +43,10 @@
       restart_policy: unless-stopped
       recreate: "{{ loki_template_config is changed }}"
   - name: Loki Write Docker Container
-    community.docker.docker_container:
+    community.docker.docker_swarm_service:
       name: "{{ loki_write_container_name }}"
       image: grafana/loki:2.8.3
+      replicas: "2"
       networks:
         - name: homelab
       command:
@@ -58,9 +60,10 @@
       restart_policy: unless-stopped
       recreate: "{{ loki_template_config is changed }}"
   - name: Loki Backend Docker Container
-    community.docker.docker_container:
+    community.docker.docker_swarm_service:
       name: "{{ loki_backend_container_name }}"
       image: grafana/loki:2.8.3
+      replicas: "2"
       networks:
         - name: homelab
       command:
