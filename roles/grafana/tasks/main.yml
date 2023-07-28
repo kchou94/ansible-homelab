@@ -38,10 +38,10 @@
         traefik.http.routers.grafana.middlewares: "gzip"
         traefik.http.routers.grafana.tls.certresolver: "myresolver"
         traefik.http.services.grafana.loadbalancer.server.port: "3000"
-      log_driver: "loki"
-      log_options:
-        loki-url: http://loki-gateway:80/loki/api/v1/push
-        max-size: "1m"
+      # log_driver: "loki"
+      # log_options:
+      #   loki-url: http://loki-gateway:80/loki/api/v1/push
+      #   max-size: "1m"
       restart_policy: unless-stopped
       recreate: "{{ template_config is changed }}"
   when: grafana_enabled is true
