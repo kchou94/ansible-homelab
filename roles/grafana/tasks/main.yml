@@ -20,7 +20,7 @@
   - name: Grafana Docker Container
     community.docker.docker_container:
       name: "{{ grafana_container_name }}"
-      image: grafana/grafana:9.1.6
+      image: grafana/grafana:9.5.7
       networks:
         - name: homelab
       volumes:
