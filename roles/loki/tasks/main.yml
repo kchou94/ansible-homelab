@@ -40,7 +40,7 @@
       env:
         TZ: "{{ timezone }}"
       restart_policy: unless-stopped
-      recreate: "{{ loki_template_config is changed }} or {{ loki_rules_template_config is changed }}"
+      recreate: "{{ loki_template_config is changed }}"
   - name: Loki Write Docker Container
     community.docker.docker_container:
       name: "{{ loki_write_container_name }}"
@@ -66,6 +66,7 @@
       command:
         - "-config.file=/etc/loki/loki.yaml"
         - "-target=backend"
+        - "-legacy-read-mode=false"
       volumes:
         - "{{ loki_data_directory }}/config:/etc/loki"
       env:
@@ -81,7 +82,7 @@
   - name: Loki Gateway Docker Container
     community.docker.docker_container:
       name: "{{ loki_gateway_container_name }}"
-      image: nginx:1.25.1
+      image: nginx:1.19
       networks:
         - name: homelab
       volumes:
@@ -103,6 +104,18 @@
   block:
     - name: Stop loki
       community.docker.docker_container:
-        name: "{{ loki_container_name }}"
+        name: "{{ loki_gateway_container_name }}"
+        state: absent
+    - name: Stop loki
+      community.docker.docker_container:
+        name: "{{ loki_read_container_name }}"
+        state: absent
+    - name: Stop loki
+      community.docker.docker_container:
+        name: "{{ loki_write_container_name }}"
+        state: absent
+    - name: Stop loki
+      community.docker.docker_container:
+        name: "{{ loki_backend_container_name }}"
         state: absent
   when: loki_enabled is false
