@@ -18,7 +18,7 @@
 - name: Syncthing Docker Container
   community.docker.docker_container:
     name: syncthing
-    image: syncthing/syncthing:1.23.6
+    image: syncthing/syncthing:1.23.7
     networks:
       - name: homelab
     ports:
