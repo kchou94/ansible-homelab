@@ -79,3 +79,15 @@
     fstype: swap
     state: absent
   loop: ["none", "swap"]
+
+# mkdir nas directory
+- name: Create nas directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+    state: directory
+  with_items:
+    - "{{ nas_home }}"
+    - "{{ nas_app_data_directory }}"

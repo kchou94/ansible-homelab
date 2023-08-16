@@ -1,6 +1,6 @@
 ---
 - name: Ansible-homelab
-  hosts: y9000p
+  hosts: b550m
   become: true
   gather_facts: true
 
@@ -8,7 +8,4 @@
     - traefik
     - cloudflared
     - echo-server
-    - joplin
-    - siyuan
-    - grafana
-    - loki
+    - syncthing

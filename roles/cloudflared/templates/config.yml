@@ -2,7 +2,4 @@ ingress:
   - hostname: "echo-server.{{ cloudflared_tunnel_domain_name }}"
     service: http://echo-server:8080
 
-  - hostname: "siyuan.{{ cloudflared_tunnel_domain_name }}"
-    service: https://siyuan.{{ traefik_domain_name }}
-
   - service: http_status:404

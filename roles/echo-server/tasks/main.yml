@@ -3,23 +3,16 @@
   block:
   - name: Create Echo Server Container
     community.docker.docker_container:
-      name: echo-server
+      name: "{{ echo_server_container_name }}"
       image: jmalloc/echo-server:0.3.5
       networks:
         - name: homelab
-      labels:
-        traefik.enable: "true"
-        traefik.http.routers.echo-server.rule: "Host(`echo-server.{{ traefik_domain_name }}`)"
-        traefik.http.routers.echo-server.entrypoints: "websecure"
-        traefik.http.routers.echo-server.middlewares: "gzip"
-        traefik.http.routers.echo-server.tls.certresolver: "myresolver"
-        traefik.http.services.echo-server.loadbalancer.server.port: "8080"
   when: echo_server_enabled is true
 
 - name: Stop Echo Server
   block:
     - name: Stop Echo Server
       community.docker.docker_container:
-        name: echo-server
+        name: "{{ echo_server_container_name }}"
         state: absent
   when: echo_server_enabled is false
