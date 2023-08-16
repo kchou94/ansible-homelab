@@ -1,8 +1,8 @@
 - name: Ansible-homelab
-  hosts: y9000p
+  hosts: b550m
   become: true
   gather_facts: true
 
   roles:
     - geerlingguy.docker
-    - general
+    # - general

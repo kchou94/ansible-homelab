@@ -35,13 +35,18 @@
       command:
         - "-config.file=/etc/loki/loki.yaml"
         - "-target=read"
-      volumes:
-        - "{{ loki_data_directory }}/config:/etc/loki"
-        - "{{ loki_data_directory }}/rules:/loki/rules:ro"
+      mounts:
+        - source: "{{ loki_data_directory }}/config"
+          target: /etc/loki
+          type: bind
+        - source: "{{ loki_data_directory }}/rules"
+          target: /loki/rules
+          type: bind
+          readonly: true
       env:
         TZ: "{{ timezone }}"
-      restart_policy: unless-stopped
-      recreate: "{{ loki_template_config is changed }}"
+      restart_config:
+        condition: any
   - name: Loki Write Docker Container
     community.docker.docker_swarm_service:
       name: "{{ loki_write_container_name }}"
@@ -52,13 +57,17 @@
       command:
         - "-config.file=/etc/loki/loki.yaml"
         - "-target=write"
-      volumes:
-        - "{{ loki_data_directory }}/config:/etc/loki"
-        - "{{ loki_data_directory }}/chunks:/loki/chunks"
+      mounts:
+        - source: "{{ loki_data_directory }}/config"
+          target: /etc/loki
+          type: bind
+        - source: "{{ loki_data_directory }}/chunks"
+          target: /loki/chunks
+          type: bind
       env:
         TZ: "{{ timezone }}"
-      restart_policy: unless-stopped
-      recreate: "{{ loki_template_config is changed }}"
+      restart_config:
+        condition: any
   - name: Loki Backend Docker Container
     community.docker.docker_swarm_service:
       name: "{{ loki_backend_container_name }}"
@@ -70,12 +79,14 @@
         - "-config.file=/etc/loki/loki.yaml"
         - "-target=backend"
         - "-legacy-read-mode=false"
-      volumes:
-        - "{{ loki_data_directory }}/config:/etc/loki"
+      mounts:
+        - source: "{{ loki_data_directory }}/config"
+          target: /etc/loki
+          type: bind
       env:
         TZ: "{{ timezone }}"
-      restart_policy: unless-stopped
-      recreate: "{{ loki_template_config is changed }}"
+      restart_config:
+        condition: any
   - name: Template Loki gateway nginx.conf
     ansible.builtin.template:
       src: nginx.conf

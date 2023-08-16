@@ -46,10 +46,10 @@
   register: result
   until: result is succeeded
 
-- name: Install Loki plugin
-  community.docker.docker_plugin:
-    plugin_name: grafana/loki-docker-driver
-    state: present
+# - name: Install Loki plugin
+#   community.docker.docker_plugin:
+#     plugin_name: grafana/loki-docker-driver
+#     state: present
 
 - name: Set hostname
   ansible.builtin.hostname:
