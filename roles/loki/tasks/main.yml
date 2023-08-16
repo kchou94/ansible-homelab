@@ -28,7 +28,7 @@
   - name: Loki Read Docker Container
     community.docker.docker_swarm_service:
       name: "{{ loki_read_container_name }}"
-      image: grafana/loki:2.8.3
+      image: grafana/loki:2.8.4
       replicas: "2"
       networks:
         - name: homelab
@@ -50,7 +50,7 @@
   - name: Loki Write Docker Container
     community.docker.docker_swarm_service:
       name: "{{ loki_write_container_name }}"
-      image: grafana/loki:2.8.3
+      image: grafana/loki:2.8.4
       replicas: "2"
       networks:
         - name: homelab
@@ -71,7 +71,7 @@
   - name: Loki Backend Docker Container
     community.docker.docker_swarm_service:
       name: "{{ loki_backend_container_name }}"
-      image: grafana/loki:2.8.3
+      image: grafana/loki:2.8.4
       replicas: "2"
       networks:
         - name: homelab
