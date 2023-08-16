@@ -1,0 +1,42 @@
+---
+- name: Start Vaultwarden Server
+  block:
+  - name: Create Vaultwarden Directories
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      mode: "0755"
+    with_items:
+      - "{{ vaultwarden_data_directory }}"
+
+  - name: Vaultwarden Docker Container
+    community.docker.docker_container:
+      name: "{{ vaultwarden_container_name }}"
+      image: vaultwarden/server:1.29.1
+      networks:
+        - name: homelab
+      volumes:
+        - "{{ vaultwarden_data_directory }}:/data"
+      env:
+        TZ: "{{ timezone }}"
+        DOMAIN: "https://vaultwarden.{{ cloudflared_tunnel_domain_name }}"
+        SIGNUPS_ALLOWED: "{{ vaultwarden_allow_signups | string }}"
+        WEBSOCKET_ENABLED: "true"
+        ADMIN_TOKEN: "{{ vaultwarden_admin_token }}"
+      restart_policy: unless-stopped
+  when: vaultwarden_enabled is true
+
+- name: Stop Vaultwarden Server
+  block:
+    - name: Stop Vaultwarden Server
+      community.docker.docker_container:
+        name: "{{ vaultwarden_container_name }}"
+        state: absent
+  when: vaultwarden_enabled is false
+
+# - name: vaultwarden Backup Container
+#   community.docker.docker_container:
+#     name: vaultwarden-backup
+#     image: bruceforce/vaultwarden-backup:2.0.4
+#     restart_policy: unless-stopped
+#     volumes_from: vaultwarden
