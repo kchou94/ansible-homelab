@@ -5,3 +5,6 @@ roles:
 
   - name: geerlingguy.pip
     version: 2.2.0
+
+collections:
+  - name: prometheus.prometheus

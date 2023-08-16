@@ -5,8 +5,9 @@
   gather_facts: true
 
   roles:
-    - traefik
-    - cloudflared
-    - echo-server
-    - syncthing
-    - vaultwarden
+    # - traefik
+    # - cloudflared
+    # - echo-server
+    # - syncthing
+    # - vaultwarden
+    - prometheus.prometheus.prometheus
