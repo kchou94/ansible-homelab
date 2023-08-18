@@ -4,9 +4,20 @@
   become: true
   gather_facts: true
 
+  vars:
+    prometheus_version: 2.46.0
+    alertmanager_version: 0.25.0
+    node_exporter_version: 1.6.1
+    grafana_version: 10.0.3
+
   roles:
     - traefik
     - cloudflared
     - echo-server
     - syncthing
     - vaultwarden
+    - prometheus.prometheus.prometheus
+    - prometheus.prometheus.alertmanager
+    - prometheus.prometheus.node_exporter
+    - grafana.grafana.grafana
+    - ome.cadvisor

@@ -1,0 +1,23 @@
+{{ define "__berny_text_alert_list" }}{{ range . }}
+---
+🪪 <b>{{ .Labels.alertname }}</b>
+{{- if .Annotations.summary }}
+📝 {{ .Annotations.summary }}{{ end }}
+{{- if .Annotations.description }}
+📖 {{ .Annotations.description }}{{ end }}
+🏷 Labels:
+{{ range .Labels.SortedPairs }}  <i>{{ .Name }}</i>: <code>{{ .Value }}</code>
+{{ end }}{{ end }}
+🛠 <a href="http://192.168.50.3:3000/">Grafana</a> 💊 <a href="http://192.168.50.3:9093/">Alertmanager</a> 💊 <a href="http://192.168.50.3:9090/">Prometheus</a> 🛠
+{{ end }}
+
+{{ define "telegram.default.message" }}
+{{ if gt (len .Alerts.Firing) 0 }}
+🔥 Alerts Firing 🔥
+{{ template "__berny_text_alert_list" .Alerts.Firing }}
+{{ end }}
+{{ if gt (len .Alerts.Resolved) 0 }}
+✅ Alerts Resolved ✅
+{{ template "__berny_text_alert_list" .Alerts.Resolved }}
+{{ end }}
+{{ end }}

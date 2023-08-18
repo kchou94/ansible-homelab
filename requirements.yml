@@ -5,3 +5,11 @@ roles:
 
   - name: geerlingguy.pip
     version: 2.2.0
+
+  - name: ome.cadvisor
+
+collections:
+  - name: prometheus.prometheus
+    version: 0.5.1
+  - name: grafana.grafana
+    version: 2.1.5

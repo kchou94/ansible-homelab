@@ -37,6 +37,7 @@
     - software-properties-common
     - unzip
     - util-linux
+    - python3-jmespath
   register: result
   until: result is succeeded
 
