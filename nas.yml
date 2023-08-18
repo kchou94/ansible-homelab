@@ -11,6 +11,7 @@
     grafana_version: 10.0.3
 
   roles:
+<<<<<<< HEAD
     - traefik
     - cloudflared
     - echo-server
@@ -21,3 +22,11 @@
     - prometheus.prometheus.node_exporter
     - grafana.grafana.grafana
     - ome.cadvisor
+=======
+    # - traefik
+    # - cloudflared
+    # - echo-server
+    # - syncthing
+    # - vaultwarden
+    - prometheus.prometheus.prometheus
+>>>>>>> a181389aa665008ccb90b95c0b157e75229a2a60
