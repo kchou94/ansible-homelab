@@ -6,7 +6,6 @@ roles:
   - name: geerlingguy.pip
     version: 2.2.0
 
-<<<<<<< HEAD
   - name: ome.cadvisor
 
 collections:
@@ -14,7 +13,3 @@ collections:
     version: 0.5.1
   - name: grafana.grafana
     version: 2.1.5
-=======
-collections:
-  - name: prometheus.prometheus
->>>>>>> a181389aa665008ccb90b95c0b157e75229a2a60

@@ -9,6 +9,7 @@
     alertmanager_version: 0.25.0
     node_exporter_version: 1.6.1
     grafana_version: 10.0.3
+    cadvisor_version: v0.47.2
 
   roles:
     - traefik

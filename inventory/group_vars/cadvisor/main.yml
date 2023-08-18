@@ -1,0 +1,10 @@
+---
+cadvisor_enabled: true
+
+cadvisor_version: v0.47.2
+cadvisor_checksum: >-
+  30602f675e9bcd39b0d4cd4bd9e83c0849dd4bb3a60a0544b9f2a6451a3facfe
+cadvisor_port: 9280
+cadvisor_url: https://github.com/google/cadvisor/releases/download
+cadvisor_download: "{{ cadvisor_url }}/{{ cadvisor_version }}/cadvisor-{{ cadvisor_version }}-linux-amd64"
+cadvisor_runtime_options: ""

@@ -1,1 +1,4 @@
 all.yml
+inventory/hosts.yml
+inventory/group_vars/alertmanager/main.yml
+inventory/host_vars/cc.devopsthin.org.yml

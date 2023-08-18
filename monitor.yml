@@ -1,0 +1,53 @@
+---
+- name: Ansible Monitor
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Hostname Configuration
+      block:
+        - name: Network Configuration | Set hostname
+          ansible.builtin.hostname:
+            name: "{{ inventory_hostname }}"
+        - name: Network Configuration | Update hosts
+          ansible.builtin.copy:
+            content: |
+              127.0.0.1 localhost
+              127.0.1.1 {{ inventory_hostname }}
+              # The following lines are desirable for IPv6 capable hosts
+              ::1     localhost ip6-localhost ip6-loopback
+              ff02::1 ip6-allnodes
+              ff02::2 ip6-allrouters
+            dest: /etc/hosts
+            mode: preserve
+
+    - name: Install Prometheus
+      ansible.builtin.include_role:
+        name: prometheus.prometheus.prometheus
+      #   public: true
+      # vars:
+      #   k3s_state: installed
+      when: prometheus_enabled is defined and prometheus_enabled | bool
+
+    - name: Install Alertmanager
+      ansible.builtin.include_role:
+        name: prometheus.prometheus.alertmanager
+      vars:
+        alertmanager_version: 0.25.0
+      when: alertmanager_enabled is defined and alertmanager_enabled | bool
+
+    - name: Install Node Exporter
+      ansible.builtin.include_role:
+        name: prometheus.prometheus.node_exporter
+      when: node_exporter_enabled is defined and node_exporter_enabled | bool
+
+    - name: Install Grafana
+      ansible.builtin.include_role:
+        name: grafana.grafana.grafana
+      when: grafana_enabled is defined and grafana_enabled | bool
+
+    - name: Install Cadvisor
+      ansible.builtin.include_role:
+        name: ome.cadvisor
+      when: cadvisor_enabled is defined and cadvisor_enabled | bool
