@@ -25,9 +25,6 @@
     - name: Install Prometheus
       ansible.builtin.include_role:
         name: prometheus.prometheus.prometheus
-      #   public: true
-      # vars:
-      #   k3s_state: installed
       when: prometheus_enabled is defined and prometheus_enabled | bool
 
     - name: Install Alertmanager
@@ -61,3 +58,8 @@
       ansible.builtin.include_role:
         name: prometheus.prometheus.systemd_exporter
       when: systemd_exporter_enabled is defined and systemd_exporter_enabled | bool
+
+    - name: Install Mysql Exporter
+      ansible.builtin.include_role:
+        name: prometheus.prometheus.mysqld_exporter
+      when: mysqld_exporter_enabled is defined and mysqld_exporter_enabled | bool

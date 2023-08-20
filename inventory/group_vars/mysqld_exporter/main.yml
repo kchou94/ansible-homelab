@@ -1,0 +1,5 @@
+---
+mysqld_exporter_enabled: true
+mysqld_exporter_version: 0.15.0
+mysqld_exporter_username: exporter
+mysqld_exporter_password: exporter
