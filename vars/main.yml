@@ -1,0 +1,11 @@
+---
+mysql_databases:
+  - name: grafana
+    collation: utf8_general_ci
+    encoding: utf8
+    replicate: 1
+mysql_users:
+  - name: grafana
+    host: "127.0.0.1"
+    password: grafana
+    priv: "grafana.*:ALL"

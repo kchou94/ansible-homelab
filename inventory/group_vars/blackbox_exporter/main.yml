@@ -1,0 +1,3 @@
+---
+blackbox_exporter_enabled: true
+blackbox_exporter_version: 0.24.0

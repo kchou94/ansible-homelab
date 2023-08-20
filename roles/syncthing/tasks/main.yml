@@ -35,13 +35,6 @@
         PUID: "1000"
         PGID: "1000"
         TZ: "{{ timezone }}"
-      labels:
-        traefik.enable: "true"
-        traefik.http.routers.echo-server.rule: "Host(`syncthing.{{ traefik_domain_name }}`)"
-        traefik.http.routers.echo-server.entrypoints: "websecure"
-        traefik.http.routers.echo-server.middlewares: "gzip"
-        traefik.http.routers.echo-server.tls.certresolver: "myresolver"
-        traefik.http.services.echo-server.loadbalancer.server.port: "8384"
       restart_policy: unless-stopped
   when: syncthing_enabled is true
 

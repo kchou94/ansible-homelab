@@ -7,6 +7,13 @@ roles:
     version: 2.2.0
 
   - name: ome.cadvisor
+    version: 0.4.0
+
+  - name: geerlingguy.mysql
+    version: 4.3.3
+
+  - name: robertdebock.openvpn
+    version: 4.0.8
 
 collections:
   - name: prometheus.prometheus

@@ -4,21 +4,23 @@
   become: true
   gather_facts: true
 
-  vars:
-    prometheus_version: 2.46.0
-    alertmanager_version: 0.25.0
-    node_exporter_version: 1.6.1
-    grafana_version: 10.0.3
-    cadvisor_version: v0.47.2
+  vars_files:
+    - vars/main.yml
+    - inventory/group_vars/all.yml
 
-  roles:
-    - traefik
-    - cloudflared
-    - echo-server
-    - syncthing
-    - vaultwarden
-    - prometheus.prometheus.prometheus
-    - prometheus.prometheus.alertmanager
-    - prometheus.prometheus.node_exporter
-    - grafana.grafana.grafana
-    - ome.cadvisor
+  tasks:
+    - name: Install mysql server
+      ansible.builtin.include_role:
+        name: geerlingguy.mysql
+
+    - name: Create openvpn server
+      ansible.builtin.include_role:
+        name: robertdebock.openvpn
+      vars:
+        openvpn_role: "server"
+
+  # roles:
+  #   - cloudflared
+  #   - echo-server
+  #   - syncthing
+  #   - vaultwarden

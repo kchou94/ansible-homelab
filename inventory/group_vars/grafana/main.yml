@@ -6,15 +6,5 @@ grafana_analytics:
 grafana_datasources:
   - name: "Prometheus"
     type: "prometheus"
-    url: "http://localhost:9090"
+    url: "http://b550m:9090"
     isDefault: true
-grafana_dashboards:
-  - dashboard_id: '4271'
-    revision_id: '3'
-    datasource: 'Prometheus'
-  - dashboard_id: '1860'
-    revision_id: '2'
-    datasource: 'Prometheus'
-  - dashboard_id: '358'
-    revision_id: '1'
-    datasource: 'Prometheus'
