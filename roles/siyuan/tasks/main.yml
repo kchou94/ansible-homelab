@@ -14,7 +14,7 @@
   - name: siyuan Docker Container
     community.docker.docker_container:
       name: "{{ siyuan_container_name }}"
-      image: b3log/siyuan:v2.9.7
+      image: b3log/siyuan:v2.10.1
       networks:
         - name: homelab
       volumes:
