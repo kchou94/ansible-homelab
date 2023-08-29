@@ -119,7 +119,7 @@
 - name: Immich web Docker Container
   community.docker.docker_container:
     name: immich-web
-    image: ghcr.io/immich-app/immich-web:v1.70.0
+    image: ghcr.io/immich-app/immich-web:v1.76.0
     networks:
       - name: homelab
     env:
